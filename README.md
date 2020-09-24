@@ -1,1 +1,5 @@
-# CSE5914_Capstone_Frontend
+## Setup 
+npm install 
+
+## run 
+npm start

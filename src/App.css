@@ -1,0 +1,122 @@
+@import "~antd/dist/antd.css";
+
+.App {
+  text-align: center;
+}
+.react-chatbot-kit-chat-container {
+    width: 300px;
+    height: 500px;
+}
+
+
+.chatbot-container {
+  margin: 40px 0;
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  right: 40px;
+  bottom: 40px;
+  z-index: 9999;
+  box-shadow: 5px 5px 13px rgba(91, 81, 81, 0.4);
+  border-radius: 5px;
+}
+.react-chatbot-kit-chat-bot-avatar-container p.react-chatbot-kit-chat-bot-avatar-letter{
+ margin-top: 18px;
+ margin-left: 3px;
+}
+
+
+.react-chatbot-kit-chat-bot-message{
+ margin-left: 5px;
+}
+
+.react-chatbot-kit-chat-header{
+    background-color: #6495ED;
+    color: #fff;
+    font-size: 0.98rem;
+}
+
+.chatbot-button {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  background-color: #1f3646;
+  border: none;
+  position: fixed;
+  bottom: 15px;
+  z-index: 9999;
+  right: 40px;
+}
+
+.chatbot-button-icon {
+  width: 25px;
+  height: 25px;
+  fill: #fff;
+}
+
+.movie-assistant{
+    border-radius: 50px;
+    width:40px;
+    height: 40px;
+    display: flex;
+    font-size: 1rem;
+    background-color: #6495ED;
+    justify-content: center;
+    color: #fff;
+    align-items: center;
+    margin-right: 10px;
+    margin-top: 5px;
+}
+
+.choice-container{
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.choice-button{
+    border-radius: 28px;
+    padding: 8px;
+    border: 1.5px solid #173e3f;
+    color: black;
+    font-size: 0.8rem;
+    margin: 1px 8px;
+    background: transparent;
+}
+
+
+/*
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+*/
