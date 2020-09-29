@@ -23,6 +23,8 @@ const dummyMovies = repeat(
   10
 );
 
+const imageAdress = "https://image.tmdb.org/t/p/w220_and_h330_face/";
+
 /**
  * Component that renders a list of videos for recommendtaions
  * props: {
@@ -39,7 +41,7 @@ const dummyMovies = repeat(
  */
 const VideoList = (props) => {
   //   let movies = props.movies;
-  let movies = dummyMovies;
+  let movies = props.movies;
   const colCounts = 3;
   const lgColCounts = 4;
   const smColCounts = 2;
@@ -57,12 +59,14 @@ const VideoList = (props) => {
       >
         <Card
           hoverable
-          cover={<img alt={movieInfo.title} src={movieInfo.avatar} />}
+          cover={
+            <img
+              alt={movieInfo.title}
+              src={imageAdress + movieInfo["poster_path"]}
+            />
+          }
         >
-          <Meta
-            title={movieInfo.title}
-            description="Based on the first of J.K. Rowling's popular children's novels about Harry Potter."
-          />
+          <Meta title={movieInfo.title} description={movieInfo.overview} />
         </Card>
       </Col>
     );

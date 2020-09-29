@@ -11,13 +11,22 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import VideoList from "../VideoList/";
+import {
+  IP_ADDRESS,
+  GET_QUESTION,
+  GET_INTIAL_MOVIE,
+  get,
+} from "../../api/base";
+import { createChatBotMessage } from "react-chatbot-kit";
+
 const { Header, Sider, Content, Footer } = Layout;
 const { TextArea } = Input;
 const { Meta } = Card;
-
 export default class HomeLayout extends React.Component {
   state = {
     collapsed: false,
+    movieList: [],
+    botMessage: [createChatBotMessage(`Hi! I am your movie assistant.`)],
   };
 
   toggle = () => {
@@ -25,6 +34,20 @@ export default class HomeLayout extends React.Component {
       collapsed: !this.state.collapsed,
     });
   };
+
+  componentDidMount() {
+    Promise.all([
+      get(IP_ADDRESS + GET_QUESTION),
+      get(IP_ADDRESS + GET_INTIAL_MOVIE),
+    ]).then(([question, movies]) => {
+      let curQuestions = this.state.botMessage;
+      curQuestions.push(createChatBotMessage(question["questionString"]));
+      this.setState({
+        movieList: movies["movieList"],
+        botMessage: curQuestions,
+      });
+    });
+  }
 
   render() {
     return (
@@ -56,8 +79,8 @@ export default class HomeLayout extends React.Component {
               overflow: "scroll",
             }}
           >
-            <VideoList />
-            <ChatBot />
+            <VideoList movies={this.state.movieList} />
+            <ChatBot messages={this.state.botMessage} />
           </Content>
         </Layout>
       </Layout>
