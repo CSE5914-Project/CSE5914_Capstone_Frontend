@@ -10,8 +10,13 @@ import ActionProvider from "./ActionProvider";
 
 function ChatBot(props) {
   const [showChatbot, toggleChatbot] = useState(true);
-  config.initialMessages = props.messages;
-  console.log(config);
+  let injectedConfig = config;
+
+  if (props.messages.length) {
+    injectedConfig.state["questions"] = props.messages;
+    // injectedConfig.initialMessages.push(props.messages[0]);
+    console.log(injectedConfig);
+  }
   return (
     <div className="Chatbot">
       <h1 className="movie-header"></h1>
@@ -20,7 +25,7 @@ function ChatBot(props) {
           ifTrue={showChatbot}
           show={
             <Bot
-              config={config}
+              config={injectedConfig}
               messageParser={MessageParser}
               actionProvider={ActionProvider}
             />

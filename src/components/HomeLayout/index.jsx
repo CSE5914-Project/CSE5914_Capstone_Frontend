@@ -26,7 +26,7 @@ export default class HomeLayout extends React.Component {
   state = {
     collapsed: false,
     movieList: [],
-    botMessage: [createChatBotMessage(`Hi! I am your movie assistant.`)],
+    botMessage: [],
   };
 
   toggle = () => {
@@ -39,9 +39,17 @@ export default class HomeLayout extends React.Component {
     Promise.all([
       get(IP_ADDRESS + GET_QUESTION),
       get(IP_ADDRESS + GET_INTIAL_MOVIE),
-    ]).then(([question, movies]) => {
+    ]).then(([questions, movies]) => {
       let curQuestions = this.state.botMessage;
-      curQuestions.push(createChatBotMessage(question["questionString"]));
+
+      questions.forEach((q) => {
+        curQuestions.push(
+          createChatBotMessage(q["questionString"], {
+            delay: 800,
+          })
+        );
+      });
+
       this.setState({
         movieList: movies["movieList"],
         botMessage: curQuestions,

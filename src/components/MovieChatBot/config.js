@@ -8,10 +8,10 @@ const config = {
   botName: "Movie Assistant",
   initialMessages: [
     createChatBotMessage(`Hi! I am your movie assistant.`),
-    createChatBotMessage("For better recommendation, are you over 18?", {
-      widget: "ageChoice",
-      delay: 800,
-    }),
+    // createChatBotMessage("For better recommendation, are you over 18?", {
+    //   widget: "ageChoice",
+    //   delay: 800,
+    // }),
   ],
   customComponents: {
     botAvatar: (props) => <BotAvatar {...props} />,
@@ -26,22 +26,22 @@ const config = {
       backgroundColor: "#6495ED",
     },
   },
-  /*
-    state:{
-        todo: []
-    },*/
+
+  state: {
+    questions: [],
+  },
   //retrieve states, has extra functions
-  // widgets: [
-  //     {
-  //         widgetName: "ageChoice",
-  //         widgetFunc: (props) => <AgeChoice {...props} />,
-  //         mapStateToProps: ["choice","test"],
-  //     },
-  //     {
-  //         widgetName: "test",
-  //         widgetFunc: (props) => <Test {...props} />
-  //     },
-  // ],
+  widgets: [
+    {
+      widgetName: "ageChoice",
+      widgetFunc: (props) => <AgeChoice {...props} />,
+      mapStateToProps: ["choice", "test"],
+    },
+    {
+      widgetName: "test",
+      widgetFunc: (props) => <Test {...props} />,
+    },
+  ],
 };
 
 export default config;
