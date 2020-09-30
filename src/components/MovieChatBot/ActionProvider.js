@@ -31,11 +31,19 @@ class ActionProvider {
     this.addMessageToState(message);
   };
 
-  nextQuestion = (questions) => {
-    this.addMessageToState(questions.shift());
-    this.setState({
-      questinos: questions,
+  nextQuestion = (question) => {
+    const message = this.createChatBotMessage(question, {
+      withAvatar: true,
+      delay: 1000,
     });
+    this.addMessageToState(message);
+  };
+
+  clearQuestion = () => {
+    this.setState((state) => ({
+      ...state,
+      question: [],
+    }));
   };
 
   endSession = () => {

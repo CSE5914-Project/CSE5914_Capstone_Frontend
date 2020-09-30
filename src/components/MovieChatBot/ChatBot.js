@@ -5,18 +5,17 @@ import { ReactComponent as ButtonIcon } from "../../botImage.svg";
 import config from "./config";
 import MessageParser from "./MessageParser";
 import ActionProvider from "./ActionProvider";
+import { createChatBotMessage } from "react-chatbot-kit";
 
 //yarn add react-chatbot-kit
 
-function ChatBot(props) {
+const ChatBot = (props) => {
   const [showChatbot, toggleChatbot] = useState(true);
-  let injectedConfig = config;
-
-  if (props.messages.length) {
-    injectedConfig.state["questions"] = props.messages;
-    // injectedConfig.initialMessages.push(props.messages[0]);
-    console.log(injectedConfig);
+  // inject the fetched questions to the state
+  if (props.messages && props.messages.length) {
+    config.state["question"][0] = props.messages[0];
   }
+
   return (
     <div className="Chatbot">
       <h1 className="movie-header"></h1>
@@ -25,7 +24,7 @@ function ChatBot(props) {
           ifTrue={showChatbot}
           show={
             <Bot
-              config={injectedConfig}
+              config={config}
               messageParser={MessageParser}
               actionProvider={ActionProvider}
             />
@@ -41,5 +40,6 @@ function ChatBot(props) {
       </button>
     </div>
   );
-}
+};
+
 export default ChatBot;

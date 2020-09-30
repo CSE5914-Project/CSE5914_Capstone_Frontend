@@ -1,5 +1,6 @@
 import React from "react";
 import "antd/dist/antd.css";
+import BotAvatar from "../MovieChatBot/BotAvatar";
 import "./index.css";
 import { Layout, Menu, Input, Button, Card } from "antd";
 import ChatBot from "../MovieChatBot/ChatBot";
@@ -16,6 +17,7 @@ import {
   GET_QUESTION,
   GET_INTIAL_MOVIE,
   get,
+  post
 } from "../../api/base";
 import { createChatBotMessage } from "react-chatbot-kit";
 
@@ -41,13 +43,8 @@ export default class HomeLayout extends React.Component {
       get(IP_ADDRESS + GET_INTIAL_MOVIE),
     ]).then(([questions, movies]) => {
       let curQuestions = this.state.botMessage;
-
       questions.forEach((q) => {
-        curQuestions.push(
-          createChatBotMessage(q["questionString"], {
-            delay: 800,
-          })
-        );
+        curQuestions.push(q["questionString"]);
       });
 
       this.setState({
