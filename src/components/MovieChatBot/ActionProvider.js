@@ -35,6 +35,7 @@ class ActionProvider {
     const message = this.createChatBotMessage(question, {
       withAvatar: true,
       delay: 1000,
+      widget: "scroller",
     });
     this.addMessageToState(message);
   };

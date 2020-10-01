@@ -18,6 +18,7 @@ const ChatBot = (props) => {
 
   // inject the state updater
   ActionProvider.prototype.onEnter = props.onEnter;
+  ActionProvider.prototype.setActionProvider = props.setActionProvider;
 
   return (
     <div className="Chatbot">

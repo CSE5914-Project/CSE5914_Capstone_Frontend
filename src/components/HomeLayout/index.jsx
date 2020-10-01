@@ -26,29 +26,32 @@ import { createChatBotMessage } from "react-chatbot-kit";
 const { Header, Sider, Content, Footer } = Layout;
 const { TextArea } = Input;
 const { Meta } = Card;
-// const [api, contextHolder] = notification.useNotification();
-const Context = React.createContext({ name: "Default" });
+const openNotificationWithIcon = (type) => {
+  notification[type]({
+    message: type === "success" ? "List Updated." : "No More Movies.",
+    duration: 2,
+  });
+};
 
 export default class HomeLayout extends React.Component {
   state = {
     collapsed: false,
     movieList: [],
-    botMessage: [],
+    botMessage: "",
+    botActionProvider: () => {},
+    failedImages: [],
   };
-
-  // openNotification = (placement) => {
-  //   api.info({
-  //     message: `Notification ${placement}`,
-  //     description: (
-  //       <Context.Consumer>{({ name }) => `Hello, ${name}!`}</Context.Consumer>
-  //     ),
-  //     placement,
-  //   });
-  // };
 
   toggle = () => {
     this.setState({
       collapsed: !this.state.collapsed,
+    });
+  };
+
+  addFailedImage = (index) => {
+    this.state.failedImages.push(index);
+    this.setState({
+      failedImages: this.state.failedImages,
     });
   };
 
@@ -62,10 +65,21 @@ export default class HomeLayout extends React.Component {
     get(IP_ADDRESS + POST_ANSWER + "?questionCode=2&answerText=" + text).then(
       (data) => {
         // update the set state
-        this.setState({
-          botMessage: data.robotResponse,
-          movieList: data["movieList"]["results"].slice(0, 10),
-        });
+        this.state.botActionProvider(data.robotResponse);
+
+        if (data["movieList"]["results"].length > 0) {
+          openNotificationWithIcon("success");
+          this.setState({
+            botMessage: data.robotResponse,
+            movieList:
+              data["movieList"]["results"].length >= 10
+                ? data["movieList"]["results"].slice(10)
+                : data["movieList"]["results"],
+            failedImages: [],
+          });
+        } else {
+          openNotificationWithIcon("info");
+        }
       }
     );
   };
@@ -73,9 +87,24 @@ export default class HomeLayout extends React.Component {
   onUserClick = (index) => {
     let movie = this.state.movieList[index];
     get(IP_ADDRESS + MOVIE_REC + movie["id"]).then((data) => {
-      this.setState({
-        movieList: data["movieList"]["results"].slice(10),
-      });
+      if (data["movieList"]["results"].length > 0) {
+        openNotificationWithIcon("success");
+        this.setState({
+          movieList:
+            data["movieList"]["results"].length >= 10
+              ? data["movieList"]["results"].slice(10)
+              : data["movieList"]["results"],
+          failedImages: [],
+        });
+      } else {
+        openNotificationWithIcon("info");
+      }
+    });
+  };
+
+  setActionProvider = (func) => {
+    this.setState({
+      botActionProvider: func,
     });
   };
 
@@ -98,7 +127,7 @@ export default class HomeLayout extends React.Component {
   }
 
   render() {
-    console.log("rednered" + this.state.botMessage);
+    // console.log("rednered" + this.state.botMessage);
     return (
       <Layout className="outer-layout">
         {/* <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
@@ -131,10 +160,13 @@ export default class HomeLayout extends React.Component {
             <VideoList
               movies={this.state.movieList}
               onUserClick={this.onUserClick}
+              addFailedImage={this.addFailedImage}
+              failedImages={this.state.failedImages}
             />
             <ChatBot
               displayMessage={this.state.botMessage}
               onEnter={this.onUserEnterText}
+              setActionProvider={this.setActionProvider}
             />
           </Content>
         </Layout>

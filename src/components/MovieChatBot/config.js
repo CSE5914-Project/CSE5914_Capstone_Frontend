@@ -40,6 +40,13 @@ const config = {
       widgetName: "test",
       widgetFunc: (props) => <Test {...props} />,
     },
+    {
+      widgetName: "scroller",
+      widgetFunc: (props) => {
+        props.scrollIntoView();
+        return <div></div>;
+      },
+    },
   ],
 };
 

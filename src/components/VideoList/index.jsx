@@ -25,6 +25,8 @@ const dummyMovies = repeat(
 
 const imageAdress = "https://image.tmdb.org/t/p/w220_and_h330_face/";
 
+const coverImagePH =
+  "https://d994l96tlvogv.cloudfront.net/uploads/film/poster/poster-image-coming-soon-placeholder-no-logo-500-x-740_22729.png";
 /**
  * Component that renders a list of videos for recommendtaions
  * props: {
@@ -59,11 +61,19 @@ const VideoList = (props) => {
       >
         <div onClick={() => props.onUserClick(i)}>
           <Card
+            onError={() => {
+              console.log(`unfound image for ${movieInfo.title}`);
+              props.addFailedImage(i);
+            }}
             hoverable
             cover={
               <img
                 alt={movieInfo.title}
-                src={imageAdress + movieInfo["poster_path"]}
+                src={
+                  props.failedImages.includes(i)
+                    ? coverImagePH
+                    : imageAdress + movieInfo["poster_path"]
+                }
               />
             }
           >
@@ -72,8 +82,7 @@ const VideoList = (props) => {
               description={
                 movieInfo.overview.length > 200
                   ? movieInfo.overview.substring(0, 200) + "..."
-                  : movieInfo.overview +
-                    " ".repeat(200 - movieInfo.overview.length)
+                  : movieInfo.overview
               }
             />
           </Card>
