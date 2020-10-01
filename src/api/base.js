@@ -1,10 +1,11 @@
 import axios from "axios";
 
 export const IP_ADDRESS = "http://127.0.0.1:8000/";
-export const GET_QUESTION = "api/get_question/";
+export const GET_QUESTION = "api/get_all_question/";
 export const GET_INTIAL_MOVIE = "api/get_popular_movies/?top_n=10";
-export const POST_ANSWER = "api/post_answer";
-export const RESET_ANSWER = "api/reset_server";
+export const POST_ANSWER = "api/post_answer/";
+export const RESET_ANSWER = "api/reset_server/";
+export const MOVIE_REC = "api/get_recommendation_for_movie/?movie_id=";
 
 export const get = (url) => {
   return axios({
@@ -26,6 +27,7 @@ export const post = (url, data) => {
     url,
     headers: {
       Accept: "*/*",
+      "Access-Control-Allow-Origin": "*",
     },
     data,
   })

@@ -5,9 +5,9 @@ class MessageParser {
     console.log(this.state);
     // this.actionProvider.
     if (this.state && this.state.question && this.state.question.length) {
-      const question = this.state.question[0];
+      const q = this.state.question[0];
       this.actionProvider.clearQuestion();
-      this.actionProvider.nextQuestion(question);
+      this.actionProvider.nextQuestion(q);
     }
   }
 
@@ -19,6 +19,7 @@ class MessageParser {
       this.actionProvider.recommendation();
     }
 
+    this.actionProvider.onEnter(message);
     // console.log(this.state);
     // if (this.state.questions.length) {
     //   this.actionProvider.nextQuestion(this.state.questions);

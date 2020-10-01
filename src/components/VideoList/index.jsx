@@ -54,20 +54,30 @@ const VideoList = (props) => {
       <Col
         key={i.toString()}
         span={24 / colCounts}
-        style={{ height: "max-content", width: "80%" }}
+        style={{ height: "auto", width: "80%" }}
         lg={24 / lgColCounts}
       >
-        <Card
-          hoverable
-          cover={
-            <img
-              alt={movieInfo.title}
-              src={imageAdress + movieInfo["poster_path"]}
+        <div onClick={() => props.onUserClick(i)}>
+          <Card
+            hoverable
+            cover={
+              <img
+                alt={movieInfo.title}
+                src={imageAdress + movieInfo["poster_path"]}
+              />
+            }
+          >
+            <Meta
+              title={movieInfo.title}
+              description={
+                movieInfo.overview.length > 200
+                  ? movieInfo.overview.substring(0, 200) + "..."
+                  : movieInfo.overview +
+                    " ".repeat(200 - movieInfo.overview.length)
+              }
             />
-          }
-        >
-          <Meta title={movieInfo.title} description={movieInfo.overview} />
-        </Card>
+          </Card>
+        </div>
       </Col>
     );
   });

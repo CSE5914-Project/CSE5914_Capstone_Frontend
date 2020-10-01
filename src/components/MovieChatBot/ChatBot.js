@@ -12,9 +12,12 @@ import { createChatBotMessage } from "react-chatbot-kit";
 const ChatBot = (props) => {
   const [showChatbot, toggleChatbot] = useState(true);
   // inject the fetched questions to the state
-  if (props.messages && props.messages.length) {
-    config.state["question"][0] = props.messages[0];
+  if (props.displayMessage && props.displayMessage.length) {
+    config.state["question"][0] = props.displayMessage;
   }
+
+  // inject the state updater
+  ActionProvider.prototype.onEnter = props.onEnter;
 
   return (
     <div className="Chatbot">
