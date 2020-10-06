@@ -41,7 +41,8 @@ export default class HomeLayout extends React.Component {
       get(IP_ADDRESS + GET_INTIAL_MOVIE),
     ]).then(([question, movies]) => {
       let curQuestions = this.state.botMessage;
-      curQuestions.push(createChatBotMessage(question["questionString"]));
+        curQuestions.push(createChatBotMessage(question["questionString"]));
+        curQuestions.push(createChatBotMessage("check"));
       this.setState({
         movieList: movies["movieList"],
         botMessage: curQuestions,
