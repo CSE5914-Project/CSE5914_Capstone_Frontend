@@ -42,6 +42,7 @@ export default class HomeLayout extends React.Component {
     failedImages: [],
   };
 
+
   toggle = () => {
     this.setState({
       collapsed: !this.state.collapsed,
@@ -55,6 +56,8 @@ export default class HomeLayout extends React.Component {
     });
   };
 
+
+
   onUserEnterText = (text) => {
     // move the question queue
     // if (this.state.botMessage.length) {
@@ -66,7 +69,6 @@ export default class HomeLayout extends React.Component {
       (data) => {
         // update the set state
         this.state.botActionProvider(data.robotResponse);
-
         if (data["movieList"]["results"].length > 0) {
           openNotificationWithIcon("success");
           this.setState({
@@ -84,15 +86,20 @@ export default class HomeLayout extends React.Component {
     );
   };
 
+
   onUserClick = (index) => {
     let movie = this.state.movieList[index];
+   // console.log( "initial movie!")
+   // console.log(movie)
     get(IP_ADDRESS + MOVIE_REC + movie["id"]).then((data) => {
       if (data["movieList"]["results"].length > 0) {
         openNotificationWithIcon("success");
+        data["movieList"]["results"].unshift(this.state.movieList[index])
+      //  console.log( data["movieList"])
         this.setState({
           movieList:
             data["movieList"]["results"].length >= 10
-              ? data["movieList"]["results"].slice(10)
+              ? data["movieList"]["results"].slice(0,10)
               : data["movieList"]["results"],
           failedImages: [],
         });
@@ -129,7 +136,7 @@ export default class HomeLayout extends React.Component {
   render() {
     // console.log("rednered" + this.state.botMessage);
     return (
-      <Layout className="outer-layout">
+      <Layout className="outer-layout" >
         {/* <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
           <div className="logo" />
           <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
@@ -169,6 +176,9 @@ export default class HomeLayout extends React.Component {
               setActionProvider={this.setActionProvider}
             />
           </Content>
+            <footer>
+                <p>The Footer. Filmpedia </p>
+            </footer>
         </Layout>
       </Layout>
     );

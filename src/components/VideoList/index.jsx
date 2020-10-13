@@ -25,8 +25,8 @@ const dummyMovies = repeat(
 
 const imageAdress = "https://image.tmdb.org/t/p/w220_and_h330_face/";
 
-const coverImagePH =
-  "https://d994l96tlvogv.cloudfront.net/uploads/film/poster/poster-image-coming-soon-placeholder-no-logo-500-x-740_22729.png";
+const coverImagePH ='https://www.hikvision.com/etc/clientlibs/it/resources/icons/loading.gif'
+  //"https://d994l96tlvogv.cloudfront.net/uploads/film/poster/poster-image-coming-soon-placeholder-no-logo-500-x-740_22729.png";
 /**
  * Component that renders a list of videos for recommendtaions
  * props: {
