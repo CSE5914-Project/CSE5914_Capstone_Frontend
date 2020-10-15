@@ -1,7 +1,9 @@
 import React from "react";
 import "antd/dist/antd.css";
 import "./index.css";
-import { Row, Col, Card } from "antd";
+import { Row, Col, Card, Skeleton } from "antd";
+import { HeartOutlined, RedoOutlined } from "@ant-design/icons";
+
 const { Meta } = Card;
 
 function repeat(item, times) {
@@ -25,8 +27,8 @@ const dummyMovies = repeat(
 
 const imageAdress = "https://image.tmdb.org/t/p/w220_and_h330_face/";
 
-const coverImagePH ='https://www.hikvision.com/etc/clientlibs/it/resources/icons/loading.gif'
-  //"https://d994l96tlvogv.cloudfront.net/uploads/film/poster/poster-image-coming-soon-placeholder-no-logo-500-x-740_22729.png";
+const coverImagePH = "https://critics.io/img/movies/poster-placeholder.png";
+
 /**
  * Component that renders a list of videos for recommendtaions
  * props: {
@@ -59,7 +61,7 @@ const VideoList = (props) => {
         style={{ height: "auto", width: "80%" }}
         lg={24 / lgColCounts}
       >
-        <div onClick={() => props.onUserClick(i)}>
+        <div>
           <Card
             onError={() => {
               console.log(`unfound image for ${movieInfo.title}`);
@@ -76,6 +78,13 @@ const VideoList = (props) => {
                 }
               />
             }
+            actions={[
+              <HeartOutlined key="favorite" />,
+              <RedoOutlined
+                key="shuffle"
+                onClick={() => props.onUserClick(i)}
+              />,
+            ]}
           >
             <Meta
               title={movieInfo.title}
@@ -92,7 +101,6 @@ const VideoList = (props) => {
   });
   // clean the last row that might be less than colCounts
   rows = <Row gutter={[vGutter, hGutter]}>{movieCols}</Row>;
-
   return <React.Fragment>{rows}</React.Fragment>;
 };
 

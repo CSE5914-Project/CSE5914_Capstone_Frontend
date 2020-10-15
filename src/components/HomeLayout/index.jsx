@@ -2,7 +2,16 @@ import React from "react";
 import "antd/dist/antd.css";
 import BotAvatar from "../MovieChatBot/BotAvatar";
 import "./index.css";
-import { Layout, Menu, Input, Button, Card, notification } from "antd";
+import {
+  Layout,
+  Menu,
+  Input,
+  Button,
+  Card,
+  notification,
+  Spin,
+  Divider,
+} from "antd";
 import ChatBot from "../MovieChatBot/ChatBot";
 import {
   MenuUnfoldOutlined,
@@ -11,6 +20,8 @@ import {
   VideoCameraOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
+import BottomScrollListener from "react-bottom-scroll-listener";
+
 import VideoList from "../VideoList/";
 import {
   IP_ADDRESS,
@@ -40,8 +51,16 @@ export default class HomeLayout extends React.Component {
     botMessage: "",
     botActionProvider: () => {},
     failedImages: [],
+    movieLoadingMore: false,
+    /*
+     *  one of the three enums: ["popular", "byId", "byGenere"]
+     */
+    movieSourceState: "popular",
+    pageNumber: 1,
+    reachedEnd: false,
+    lastRecMovieId: -1,
+    lastUserText: "",
   };
-
 
   toggle = () => {
     this.setState({
@@ -56,53 +75,52 @@ export default class HomeLayout extends React.Component {
     });
   };
 
-
-
   onUserEnterText = (text) => {
-    // move the question queue
-    // if (this.state.botMessage.length) {
-    //   this.state.botMessage.shift();
-    // }
-
     // get the updated list and resopnse
-    get(IP_ADDRESS + POST_ANSWER + "?questionCode=2&answerText=" + text).then(
-      (data) => {
-        // update the set state
-        this.state.botActionProvider(data.robotResponse);
-        if (data["movieList"]["results"].length > 0) {
-          openNotificationWithIcon("success");
-          this.setState({
-            botMessage: data.robotResponse,
-            movieList:
-              data["movieList"]["results"].length >= 10
-                ? data["movieList"]["results"].slice(10)
-                : data["movieList"]["results"],
-            failedImages: [],
-          });
-        } else {
-          openNotificationWithIcon("info");
-        }
+    get(
+      IP_ADDRESS +
+        POST_ANSWER +
+        "?questionCode=2&answerText=" +
+        text +
+        "&page=1"
+    ).then((data) => {
+      // update the set state
+      this.state.botActionProvider(data.robotResponse);
+      if (data["movieList"]["results"].length > 0) {
+        openNotificationWithIcon("success");
+        this.setState({
+          botMessage: data.robotResponse,
+          movieList: data["movieList"]["results"],
+          failedImages: [],
+          movieSourceState: "byGenre",
+          pageNumber: 1,
+          reachedEnd: false,
+          lastUserText: text,
+        });
+        window.scrollTo(0, 0);
+      } else {
+        openNotificationWithIcon("info");
       }
-    );
+    });
   };
-
 
   onUserClick = (index) => {
     let movie = this.state.movieList[index];
-   // console.log( "initial movie!")
-   // console.log(movie)
-    get(IP_ADDRESS + MOVIE_REC + movie["id"]).then((data) => {
+    let firstClick = this.state.movieSourceState !== "byId";
+
+    get(IP_ADDRESS + MOVIE_REC + movie["id"] + "&page=1").then((data) => {
       if (data["movieList"]["results"].length > 0) {
         openNotificationWithIcon("success");
-        data["movieList"]["results"].unshift(this.state.movieList[index])
-      //  console.log( data["movieList"])
+        data["movieList"]["results"].unshift(this.state.movieList[index]);
         this.setState({
-          movieList:
-            data["movieList"]["results"].length >= 10
-              ? data["movieList"]["results"].slice(0,10)
-              : data["movieList"]["results"],
+          movieList: data["movieList"]["results"],
           failedImages: [],
+          movieSourceState: "byId",
+          pageNumber: 1,
+          reachedEnd: false,
+          lastRecMovieId: movie["id"],
         });
+        window.scrollTo(0, 0);
       } else {
         openNotificationWithIcon("info");
       }
@@ -115,10 +133,93 @@ export default class HomeLayout extends React.Component {
     });
   };
 
+  handleScrollToBottom = () => {
+    if (!this.state.reachedEnd) {
+      this.setState({
+        movieLoadingMore: true,
+      });
+
+      if (this.state.movieSourceState === "popular") {
+        get(
+          IP_ADDRESS +
+            GET_INTIAL_MOVIE +
+            `?top_n=20&page=${this.state.pageNumber + 1}`
+        ).then((data) => {
+          if (data["movieList"].length > 0) {
+            this.setState({
+              pageNumber: this.state.pageNumber + 1,
+              movieList: this.state.movieList.concat(data["movieList"]),
+              loadingMore: false,
+            });
+          } else {
+            this.setState({
+              loadingMore: false,
+              reachedEnd: true,
+            });
+          }
+        });
+      } else if (this.state.movieSourceState === "byId") {
+        get(
+          IP_ADDRESS +
+            MOVIE_REC +
+            this.state.lastRecMovieId +
+            `&page=${this.state.pageNumber + 1}`
+        ).then((data) => {
+          if (data["movieList"]["results"].length > 20) {
+            this.setState({
+              pageNumber: this.state.pageNumber + 1,
+              movieList: this.state.movieList.concat(
+                data["movieList"]["results"]
+              ),
+              loadingMore: false,
+            });
+          } else if (data["movieList"]["results"].length > 0) {
+            this.setState({
+              pageNumber: this.state.pageNumber + 1,
+              movieList: this.state.movieList.concat(
+                data["movieList"]["results"]
+              ),
+              loadingMore: false,
+              reachedEnd: true,
+            });
+          } else {
+            this.setState({
+              loadingMore: false,
+              reachedEnd: true,
+            });
+          }
+        });
+      } else {
+        get(
+          IP_ADDRESS +
+            POST_ANSWER +
+            "?questionCode=2&answerText=" +
+            this.state.lastUserText +
+            `&page=${this.state.pageNumber + 1}`
+        ).then((data) => {
+          if (data["movieList"]["results"].length > 0) {
+            this.setState({
+              pageNumber: this.state.pageNumber + 1,
+              movieList: this.state.movieList.concat(
+                data["movieList"]["results"]
+              ),
+              loadingMore: false,
+            });
+          } else {
+            this.setState({
+              loadingMore: false,
+              reachedEnd: true,
+            });
+          }
+        });
+      }
+    }
+  };
+
   componentDidMount() {
     Promise.all([
       get(IP_ADDRESS + GET_QUESTION),
-      get(IP_ADDRESS + GET_INTIAL_MOVIE),
+      get(IP_ADDRESS + GET_INTIAL_MOVIE + "?top_n=20&page=1"),
     ]).then(([questions, movies]) => {
       let curQuestions = [];
       questions.forEach((q) => {
@@ -136,7 +237,7 @@ export default class HomeLayout extends React.Component {
   render() {
     // console.log("rednered" + this.state.botMessage);
     return (
-      <Layout className="outer-layout" >
+      <Layout className="outer-layout">
         {/* <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
           <div className="logo" />
           <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
@@ -170,15 +271,26 @@ export default class HomeLayout extends React.Component {
               addFailedImage={this.addFailedImage}
               failedImages={this.state.failedImages}
             />
+            {this.state.movieLoadingMore && !this.state.reachedEnd ? (
+              <Spin tip={"Fetching more movies..."} />
+            ) : (
+              <div></div>
+            )}
+
+            {this.state.reachedEnd ? (
+              <Divider dashed>The End of the World</Divider>
+            ) : null}
             <ChatBot
               displayMessage={this.state.botMessage}
               onEnter={this.onUserEnterText}
               setActionProvider={this.setActionProvider}
             />
           </Content>
+          <BottomScrollListener onBottom={this.handleScrollToBottom}>
             <footer>
-                <p>The Footer. Filmpedia </p>
+              <p>The Footer. Filmpedia </p>
             </footer>
+          </BottomScrollListener>
         </Layout>
       </Layout>
     );
