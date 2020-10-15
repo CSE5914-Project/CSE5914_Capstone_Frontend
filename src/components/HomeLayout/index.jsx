@@ -238,14 +238,14 @@ export default class HomeLayout extends React.Component {
     // console.log("rednered" + this.state.botMessage);
     return (
       <Layout className="outer-layout">
-        {/* <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
+        <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
           <div className="logo" />
           <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
             <Menu.Item key="1" icon={<UserOutlined />}>
               Film Assistant
             </Menu.Item>
           </Menu>
-        </Sider> */}
+        </Sider>
         <Layout className="site-layout">
           <Header className="site-layout-background" style={{ padding: 0 }}>
             {React.createElement(

@@ -1,7 +1,7 @@
 import React from "react";
 import "antd/dist/antd.css";
 import "./index.css";
-import { Row, Col, Card, Skeleton } from "antd";
+import { Row, Col, Card, Skeleton, Tooltip } from "antd";
 import { HeartOutlined, RedoOutlined } from "@ant-design/icons";
 
 const { Meta } = Card;
@@ -80,10 +80,16 @@ const VideoList = (props) => {
             }
             actions={[
               <HeartOutlined key="favorite" />,
-              <RedoOutlined
-                key="shuffle"
-                onClick={() => props.onUserClick(i)}
-              />,
+              <Tooltip
+                title="Refresh the page with the recommendated movies"
+                mouseEnterDelay={0.5}
+              >
+                <RedoOutlined
+                  key="shuffle"
+                  onClick={() => props.onUserClick(i)}
+                />
+                ,
+              </Tooltip>,
             ]}
           >
             <Meta

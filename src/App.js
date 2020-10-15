@@ -1,12 +1,13 @@
 import React from "react";
-import ChatBotWindow from "./components/ChatBot/ChatBotWindow";
-import VideoList from "./components/VideoList/";
-import HomeLayout from "./components/HomeLayout/";
+import { BrowserRouter as Router } from "react-router-dom";
 import "./App.css";
+import Routing from "./routes/routing";
 
 const App = () => (
   <div className="App">
-    <HomeLayout />
+    <Router>
+      <Routing />
+    </Router>
   </div>
 );
 
