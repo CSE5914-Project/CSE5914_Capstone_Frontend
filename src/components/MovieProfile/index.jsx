@@ -17,14 +17,6 @@ const { Header, Footer, Sider, Content } = Layout;
 const { Title } = Typography;
 const imageAddress = "https://image.tmdb.org/t/p/w220_and_h330_face/";
 
-
-const openNotificationWithIcon = (type) => {
-  notification[type]({
-    message: type === "trailer" ? "Existed." : "Not exist.",
-    duration: 2,
-  });
-};
-
 export default class ProfilePage extends React.Component{
     constructor(props) {
     super(props);
@@ -102,13 +94,12 @@ export default class ProfilePage extends React.Component{
                         <div style={{float:'left',marginTop:50}}>
                         <Title level={3} style={{float:'left'}}>
                                 {this.state.title}
-                            </Title><br />
-                        <p style={{textAlign: 'justify'}}>
-
+                            </Title><br /><br />
+                        <p style={{textAlign: 'left'}}>
+                            <p>
                             <div className="icons-list" style={{fontSize:16}}>
                                 <FireTwoTone /> {this.state.popularity}
                             </div>
-                            <p>
                                 <b>Original Language:</b> {this.state.original_language} <br />
                                 <b>Release Date:</b> {this.state.release_date}
                             </p>
