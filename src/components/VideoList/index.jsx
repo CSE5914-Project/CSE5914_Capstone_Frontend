@@ -1,9 +1,9 @@
 import React from "react";
 import "antd/dist/antd.css";
 import "./index.css";
+import { Link } from 'react-router-dom';
 import { Row, Col, Card, Skeleton, Tooltip } from "antd";
 import { HeartOutlined, RedoOutlined } from "@ant-design/icons";
-
 const { Meta } = Card;
 
 function repeat(item, times) {
@@ -69,6 +69,7 @@ const VideoList = (props) => {
             }}
             hoverable
             cover={
+                <Link to={`../movie/${movieInfo.id}`}>
               <img
                 alt={movieInfo.title}
                 src={
@@ -77,6 +78,7 @@ const VideoList = (props) => {
                     : imageAdress + movieInfo["poster_path"]
                 }
               />
+              </Link>
             }
             actions={[
               <HeartOutlined key="favorite" />,

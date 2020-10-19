@@ -1,0 +1,16 @@
+
+.rate {
+  float: right;
+  right: 15%;
+  color: white
+}
+
+.page-box {
+  height: 1200px;
+  background-color: var(--backColor);
+}
+
+.movie-page{
+  position: relative;
+  padding: 50px 10%;
+}

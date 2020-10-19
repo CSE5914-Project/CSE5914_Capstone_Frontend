@@ -33,6 +33,7 @@ import {
   post,
 } from "../../api/base";
 import { createChatBotMessage } from "react-chatbot-kit";
+import MovieProfile from "../MovieProfile/";
 
 const { Header, Sider, Content, Footer } = Layout;
 const { TextArea } = Input;
