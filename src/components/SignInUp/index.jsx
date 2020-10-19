@@ -1,5 +1,5 @@
 import React from "react";
-import { Carousel, Row, Col, Image, Layout, Menu, Divider } from "antd";
+import { Carousel, Row, Col, Image, Layout, Menu, Divider, Button } from "antd";
 import {
   IP_ADDRESS,
   GET_QUESTION,
@@ -50,8 +50,27 @@ export default class SignInUp extends React.Component {
         className="layout"
         style={{ background: "linear-gradient(180deg, #000000, #2a2a2a	)" }}
       >
-        <Header style={{ background: "black" }}>
-          <h1 style={{ color: "white" }}>FilmPedia</h1>
+        <Header style={{ background: "black", padding: "0" }}>
+          <Layout>
+            <Content
+              style={{
+                background: "black",
+              }}
+            >
+              <h1 style={{ color: "white", left: "47%", position: "fixed" }}>
+                FilmPedia
+              </h1>
+            </Content>
+            <Sider>
+              <Button
+                type="primary"
+                shape="round"
+                style={{ width: "auto", margin: "auto" }}
+              >
+                Access Now!
+              </Button>
+            </Sider>
+          </Layout>
         </Header>
         <Carousel afterChange={onChange} autoplay>
           <div>
@@ -105,8 +124,13 @@ export default class SignInUp extends React.Component {
             </Row>
           </div>
         </Carousel>
-        <Content>
-          <Row gutter={[8, 16]}>
+        <br />
+        <Content
+          style={{
+            margin: "5%",
+          }}
+        >
+          <Row gutter={[16, 32]}>
             <Col span={8}>
               <h2 style={{ color: "white" }}>30s Registration</h2>
               <Image src={accessIcon}></Image>
@@ -139,8 +163,8 @@ export default class SignInUp extends React.Component {
             </Col>
           </Row>
 
-          <Row gutter={[40, 32]}>
-            <Col span={12} offset={1}>
+          <Row gutter={[16, 32]}>
+            <Col span={8} offset={3}>
               <h2 style={{ color: "white" }}>24H Persistent Storage</h2>
               <Image src={storageIcon}></Image>
               <Divider style={{ background: "white" }} />
@@ -150,7 +174,7 @@ export default class SignInUp extends React.Component {
                 and favorites up to 24 hours.
               </h3>
             </Col>
-            <Col span={12} offset={1}>
+            <Col span={8} offset={1}>
               <h2 style={{ color: "white" }}>Film Community</h2>
               <Image src={comIcon}></Image>
               <Divider style={{ background: "white" }} />
