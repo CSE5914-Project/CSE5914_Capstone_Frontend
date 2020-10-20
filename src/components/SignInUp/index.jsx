@@ -57,7 +57,14 @@ export default class SignInUp extends React.Component {
                 background: "black",
               }}
             >
-              <h1 style={{ color: "white", left: "47%", position: "fixed" }}>
+              <h1
+                style={{
+                  color: "white",
+                  left: "10%",
+                  position: "relative",
+                  fontSize: "x-large",
+                }}
+              >
                 FilmPedia
               </h1>
             </Content>
