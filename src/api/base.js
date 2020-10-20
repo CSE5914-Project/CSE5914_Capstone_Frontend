@@ -7,7 +7,11 @@ export const POST_ANSWER = "api/post_answer/";
 export const RESET_ANSWER = "api/reset_server/";
 export const MOVIE_REC = "api/get_recommendation_for_movie/?movie_id=";
 export const MOVIE_PROFILE = "api/movie/?movie_id=";
-export const MOVIE_TRAILER_LINK = "api/get_movie_trailer_link/?movie_id="
+export const MOVIE_TRAILER_LINK = "api/get_movie_trailer_link/?movie_id=";
+export const GET_USER = "api/get_user_info/";
+export const UPDATE_USER = "api/update_user_info/?";
+export const CREATE_SESSION = "api/create_guest_session/?";
+
 //export const GET_LATEST_MOVIE ="api/get_latest_movie/?top_n=10";
 
 export const get = (url) => {

@@ -285,6 +285,7 @@ export default class HomeLayout extends React.Component {
               displayMessage={this.state.botMessage}
               onEnter={this.onUserEnterText}
               setActionProvider={this.setActionProvider}
+              username={this.props.user.username}
             />
           </Content>
           <BottomScrollListener onBottom={this.handleScrollToBottom}>
