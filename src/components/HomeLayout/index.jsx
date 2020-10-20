@@ -19,15 +19,21 @@ import {
   UserOutlined,
   VideoCameraOutlined,
   UploadOutlined,
+  HistoryOutlined,
+  FireOutlined,
+  HeartOutlined,
 } from "@ant-design/icons";
 import BottomScrollListener from "react-bottom-scroll-listener";
-
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import VideoList from "../VideoList/";
 import {
   IP_ADDRESS,
   GET_QUESTION,
   GET_INTIAL_MOVIE,
+  GET_FAVO_LIST,
   POST_ANSWER,
+  ADD_FAVO_LIST,
+  REMOVE_FAVO_LIST,
   MOVIE_REC,
   get,
   post,
@@ -61,6 +67,8 @@ export default class HomeLayout extends React.Component {
     reachedEnd: false,
     lastRecMovieId: -1,
     lastUserText: "",
+    tabKey: "1",
+    favoList: [],
   };
 
   toggle = () => {
@@ -128,9 +136,37 @@ export default class HomeLayout extends React.Component {
     });
   };
 
+  addToFavorite = (index) => {
+    let movie = this.state.movieList[index];
+
+    if (movie["id"] in this.state.favoList) {
+      // remove
+      get(IP_ADDRESS + REMOVE_FAVO_LIST + `movie_id=${movie["id"]}`).then(
+        (d) => {
+          this.setState({
+            favoList: d["favorite_list"],
+          });
+        }
+      );
+    } else {
+      // add
+      get(IP_ADDRESS + ADD_FAVO_LIST + `movie_id=${movie["id"]}`).then((d) => {
+        this.setState({
+          favoList: d["favorite_list"],
+        });
+      });
+    }
+  };
+
   setActionProvider = (func) => {
     this.setState({
       botActionProvider: func,
+    });
+  };
+
+  handleMenuClick = (e) => {
+    this.setState({
+      tabKey: e.key,
     });
   };
 
@@ -233,6 +269,13 @@ export default class HomeLayout extends React.Component {
         botMessage: curQuestions[1],
       });
     });
+
+    //fetch user info
+    get(IP_ADDRESS + GET_FAVO_LIST).then((d) => {
+      this.setState({
+        favoList: d["favorite_list"],
+      });
+    });
   }
 
   render() {
@@ -240,10 +283,56 @@ export default class HomeLayout extends React.Component {
     return (
       <Layout className="outer-layout">
         <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
-          <div className="logo" />
+          {this.state.collapsed ? (
+            <h1
+              style={{
+                color: "white",
+                marginTop: "5%",
+                fontSize: "x-large",
+              }}
+            >
+              FP
+            </h1>
+          ) : (
+            <h1
+              style={{
+                color: "white",
+                marginTop: "5%",
+                fontSize: "x-large",
+              }}
+            >
+              FilmPedia
+            </h1>
+          )}
+
           <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
-            <Menu.Item key="1" icon={<UserOutlined />}>
-              Film Assistant
+            <Menu.Item
+              key="1"
+              icon={<FireOutlined />}
+              onClick={this.handleMenuClick}
+            >
+              Recent Releases
+            </Menu.Item>
+            <Menu.Item
+              key="2"
+              icon={<HeartOutlined />}
+              onClick={this.handleMenuClick}
+            >
+              Favorites
+            </Menu.Item>
+            <Menu.Item
+              key="3"
+              icon={<HistoryOutlined />}
+              onClick={this.handleMenuClick}
+            >
+              History
+            </Menu.Item>
+            <Menu.Item
+              key="4"
+              icon={<UserOutlined />}
+              onClick={this.handleMenuClick}
+            >
+              Profile
             </Menu.Item>
           </Menu>
         </Sider>
@@ -266,21 +355,47 @@ export default class HomeLayout extends React.Component {
               overflow: "scroll",
             }}
           >
-            <VideoList
-              movies={this.state.movieList}
-              onUserClick={this.onUserClick}
-              addFailedImage={this.addFailedImage}
-              failedImages={this.state.failedImages}
-            />
-            {this.state.movieLoadingMore && !this.state.reachedEnd ? (
-              <Spin tip={"Fetching more movies..."} />
-            ) : (
-              <div></div>
-            )}
-
-            {this.state.reachedEnd ? (
-              <Divider dashed>The End of the World</Divider>
+            {this.state.tabKey === "1" ? (
+              <React.Fragment>
+                <VideoList
+                  movies={this.state.movieList}
+                  onUserClick={this.onUserClick}
+                  addFailedImage={this.addFailedImage}
+                  failedImages={this.state.failedImages}
+                  favoList={this.state.favoList}
+                  addFavorite={this.addToFavorite}
+                />
+                {this.state.movieLoadingMore && !this.state.reachedEnd ? (
+                  <Spin tip={"Fetching more movies..."} />
+                ) : (
+                  <div></div>
+                )}
+                {this.state.reachedEnd ? (
+                  <Divider dashed>The End of the World</Divider>
+                ) : null}
+              </React.Fragment>
             ) : null}
+
+            {this.state.tabKey === "2" ? (
+              <React.Fragment>
+                <VideoList
+                  movies={Object.keys(this.state.favoList).map((id) => {
+                    return {
+                      id: this.state.favoList[id]["id"],
+                      overview: this.state.favoList[id]["overview"],
+                      title: this.state.favoList[id]["title"],
+                      poster_path: this.state.favoList[id]["poster_path"],
+                    };
+                  })}
+                  onUserClick={this.onUserClick}
+                  addFailedImage={this.addFailedImage}
+                  failedImages={this.state.failedImages}
+                  favoList={this.state.favoList}
+                  addFavorite={this.addToFavorite}
+                />
+              </React.Fragment>
+            ) : null}
+
             <ChatBot
               displayMessage={this.state.botMessage}
               onEnter={this.onUserEnterText}

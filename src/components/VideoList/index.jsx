@@ -1,9 +1,9 @@
 import React from "react";
 import "antd/dist/antd.css";
 import "./index.css";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import { Row, Col, Card, Skeleton, Tooltip } from "antd";
-import { HeartOutlined, RedoOutlined } from "@ant-design/icons";
+import { HeartOutlined, RedoOutlined, HeartTwoTone } from "@ant-design/icons";
 const { Meta } = Card;
 
 function repeat(item, times) {
@@ -27,7 +27,8 @@ const dummyMovies = repeat(
 
 const imageAdress = "https://image.tmdb.org/t/p/w220_and_h330_face/";
 
-const coverImagePH = "https://critics.io/img/movies/poster-placeholder.png";
+const coverImagePH =
+  "https://php7.joblo.com/assets/images/movie-database/placeholder.jpg";
 
 /**
  * Component that renders a list of videos for recommendtaions
@@ -52,8 +53,20 @@ const VideoList = (props) => {
   const hGutter = 48;
   const vGutter = 48;
   let rows = [];
-  // render movie cards based on the movieInfo
   let movieCols = movies.map((movieInfo, i) => {
+    let isFavo = movieInfo.id in props.favoList;
+    let heartButton = (
+      <HeartOutlined key="favorite" onClick={() => props.addFavorite(i)} />
+    );
+    if (isFavo) {
+      heartButton = (
+        <HeartTwoTone
+          key="favorite"
+          twoToneColor="#eb2f96"
+          onClick={() => props.addFavorite(i)}
+        />
+      );
+    }
     return (
       <Col
         key={i.toString()}
@@ -69,19 +82,19 @@ const VideoList = (props) => {
             }}
             hoverable
             cover={
-                <Link to={`../movie/${movieInfo.id}`}>
-              <img
-                alt={movieInfo.title}
-                src={
-                  props.failedImages.includes(i)
-                    ? coverImagePH
-                    : imageAdress + movieInfo["poster_path"]
-                }
-              />
+              <Link to={`../movie/${movieInfo.id}`}>
+                <img
+                  alt={movieInfo.title}
+                  src={
+                    props.failedImages.includes(i)
+                      ? coverImagePH
+                      : imageAdress + movieInfo["poster_path"]
+                  }
+                />
               </Link>
             }
             actions={[
-              <HeartOutlined key="favorite" />,
+              heartButton,
               <Tooltip
                 title="Refresh the page with the recommendated movies"
                 mouseEnterDelay={0.5}

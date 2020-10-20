@@ -21,6 +21,7 @@ import {
   get,
   post,
   CREATE_SESSION,
+  RESET_SERVER,
   GET_USER,
 } from "../../api/base";
 import { CopyrightOutlined } from "@ant-design/icons";
@@ -33,9 +34,7 @@ import { Link, Redirect } from "react-router-dom";
 
 const { Header, Content, Footer, Sider } = Layout;
 
-function onChange(a, b, c) {
-  console.log(a, b, c);
-}
+function onChange(a, b, c) {}
 
 const { Option } = Select;
 
@@ -51,7 +50,7 @@ const imageAdress = "https://image.tmdb.org/t/p/w600_and_h900_bestv2/";
 export default class SignInUp extends React.Component {
   state = {
     posterLink: [],
-    modalVisible: true,
+    modalVisible: false,
     modalLoading: false,
     newSession: false,
     loggedIn: false,
@@ -98,42 +97,50 @@ export default class SignInUp extends React.Component {
     });
 
     // see if there is already a session for this user
-    if (!this.state.newSession) {
-      get(IP_ADDRESS + GET_USER).then((user) => {
-        if (user["username"] === this.state.username) {
-          // found exsting session
-          this.props.setUser({
-            username: user["username"],
-            age: user["age"],
-            lang: user["language"],
-          });
+    get(IP_ADDRESS + GET_USER).then((user) => {
+      if (user["username"] === this.state.username) {
+        // found exsting session
+        this.props.setUser({
+          username: user["username"],
+          age: user["age"],
+          lang: user["language"],
+        });
 
-          this.setState({
-            loggedIn: true,
-          });
-        } else {
-          this.setState({
-            newSession: true,
-            modalLoading: false,
-          });
-        }
-      });
-    } else {
-      get(
-        IP_ADDRESS +
-          CREATE_SESSION +
-          `username=${this.state.username}&age=${this.state.age}&language=${this.state.lang}`
-      ).then((data) => {
         this.setState({
           loggedIn: true,
           modalLoading: false,
         });
-      });
-    }
+      } else if (this.state.newSession) {
+        get(IP_ADDRESS + RESET_SERVER).then(() => {
+          get(
+            IP_ADDRESS +
+              CREATE_SESSION +
+              `username=${this.state.username}&age=${this.state.age}&language=${this.state.lang}`
+          ).then((data) => {
+            this.setState({
+              loggedIn: true,
+              modalLoading: false,
+            });
+          });
+        });
+      } else {
+        this.setState({
+          modalLoading: false,
+          newSession: true,
+        });
+      }
+    });
   };
 
   handleCancel = () => {
-    this.setState({ modalVisible: false });
+    this.setState({
+      modalVisible: false,
+      username: "",
+      age: "no",
+      lang: "en",
+      newSession: false,
+      modalLoading: false,
+    });
   };
 
   render() {
@@ -185,7 +192,7 @@ export default class SignInUp extends React.Component {
                   <Button
                     key="submit"
                     type="primary"
-                    loading={this.state.modalLoading}
+                    // loading={this.state.modalLoading}
                     onClick={this.handleOk}
                   >
                     Submit
@@ -198,6 +205,7 @@ export default class SignInUp extends React.Component {
                     placeholder="user123"
                     style={{ width: "50%" }}
                     onChange={this.onUsernameChange}
+                    value={this.state.username}
                   />
                 </div>
 
@@ -217,7 +225,7 @@ export default class SignInUp extends React.Component {
                     Language &nbsp; &nbsp; &nbsp; &nbsp;
                     <Select defaultValue="en" onChange={this.onLangChange}>
                       <Option value="en">English</Option>
-                      <Option value="ch">Chinese</Option>
+                      <Option value="zh">Chinese</Option>
                     </Select>
                   </div>
                 ) : null}
