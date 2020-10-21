@@ -225,6 +225,10 @@ export default class SignInUp extends React.Component {
                     Language &nbsp; &nbsp; &nbsp; &nbsp;
                     <Select defaultValue="en" onChange={this.onLangChange}>
                       <Option value="en">English</Option>
+                      <Option value="es">Spanish</Option>
+                      <Option value="ru">Russian</Option>
+                      <Option value="fr">French</Option>
+                      <Option value="ko">Korean</Option>
                       <Option value="zh">Chinese</Option>
                     </Select>
                   </div>

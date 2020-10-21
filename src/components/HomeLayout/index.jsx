@@ -16,6 +16,7 @@ import ChatBot from "../MovieChatBot/ChatBot";
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
+  LogoutOutlined,
   UserOutlined,
   VideoCameraOutlined,
   UploadOutlined,
@@ -24,7 +25,12 @@ import {
   HeartOutlined,
 } from "@ant-design/icons";
 import BottomScrollListener from "react-bottom-scroll-listener";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Link,
+  Redirect,
+} from "react-router-dom";
 import VideoList from "../VideoList/";
 import {
   IP_ADDRESS,
@@ -136,9 +142,7 @@ export default class HomeLayout extends React.Component {
     });
   };
 
-  addToFavorite = (index) => {
-    let movie = this.state.movieList[index];
-
+  addToFavorite = (movie) => {
     if (movie["id"] in this.state.favoList) {
       // remove
       get(IP_ADDRESS + REMOVE_FAVO_LIST + `movie_id=${movie["id"]}`).then(
@@ -279,10 +283,22 @@ export default class HomeLayout extends React.Component {
   }
 
   render() {
+    if (this.state.tabKey === "5") {
+      return <Redirect to="/"></Redirect>;
+    }
+
     // console.log("rednered" + this.state.botMessage);
     return (
       <Layout className="outer-layout">
-        <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
+        <Sider
+          trigger={null}
+          collapsible
+          collapsed={this.state.collapsed}
+          style={{
+            // position: "-webkit-sticky" /* Safari */,
+            position: "sticky",
+          }}
+        >
           {this.state.collapsed ? (
             <h1
               style={{
@@ -305,7 +321,15 @@ export default class HomeLayout extends React.Component {
             </h1>
           )}
 
-          <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
+          <Menu
+            theme="dark"
+            mode="inline"
+            defaultSelectedKeys={["1"]}
+            style={{
+              // position: "-webkit-sticky" /* Safari */,
+              position: "sticky",
+            }}
+          >
             <Menu.Item
               key="1"
               icon={<FireOutlined />}
@@ -333,6 +357,13 @@ export default class HomeLayout extends React.Component {
               onClick={this.handleMenuClick}
             >
               Profile
+            </Menu.Item>
+            <Menu.Item
+              key="5"
+              icon={<LogoutOutlined />}
+              onClick={this.handleMenuClick}
+            >
+              Sign Out
             </Menu.Item>
           </Menu>
         </Sider>
@@ -392,6 +423,7 @@ export default class HomeLayout extends React.Component {
                   failedImages={this.state.failedImages}
                   favoList={this.state.favoList}
                   addFavorite={this.addToFavorite}
+                  isFavoPage={true}
                 />
               </React.Fragment>
             ) : null}

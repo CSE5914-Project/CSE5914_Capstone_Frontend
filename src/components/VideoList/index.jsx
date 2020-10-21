@@ -56,14 +56,17 @@ const VideoList = (props) => {
   let movieCols = movies.map((movieInfo, i) => {
     let isFavo = movieInfo.id in props.favoList;
     let heartButton = (
-      <HeartOutlined key="favorite" onClick={() => props.addFavorite(i)} />
+      <HeartOutlined
+        key="favorite"
+        onClick={() => props.addFavorite(movieInfo)}
+      />
     );
     if (isFavo) {
       heartButton = (
         <HeartTwoTone
           key="favorite"
           twoToneColor="#eb2f96"
-          onClick={() => props.addFavorite(i)}
+          onClick={() => props.addFavorite(movieInfo)}
         />
       );
     }
@@ -75,14 +78,18 @@ const VideoList = (props) => {
         lg={24 / lgColCounts}
       >
         <div>
-          <Card
-            onError={() => {
-              console.log(`unfound image for ${movieInfo.title}`);
-              props.addFailedImage(i);
-            }}
-            hoverable
-            cover={
-              <Link to={`../movie/${movieInfo.id}`}>
+          <Link to={`../movie/${movieInfo.id}`}>
+            <Card
+              className="img-hover-zoom"
+              onError={() => {
+                console.log(`unfound image for ${movieInfo.title}`);
+                props.addFailedImage(i);
+              }}
+              hoverable
+              style={{
+                width: "220px",
+              }}
+              cover={
                 <img
                   alt={movieInfo.title}
                   src={
@@ -91,31 +98,35 @@ const VideoList = (props) => {
                       : imageAdress + movieInfo["poster_path"]
                   }
                 />
-              </Link>
-            }
-            actions={[
-              heartButton,
-              <Tooltip
-                title="Refresh the page with the recommendated movies"
-                mouseEnterDelay={0.5}
-              >
-                <RedoOutlined
-                  key="shuffle"
-                  onClick={() => props.onUserClick(i)}
-                />
-                ,
-              </Tooltip>,
-            ]}
-          >
-            <Meta
-              title={movieInfo.title}
-              description={
-                movieInfo.overview.length > 200
-                  ? movieInfo.overview.substring(0, 200) + "..."
-                  : movieInfo.overview
               }
-            />
-          </Card>
+              actions={[
+                heartButton,
+                <Tooltip
+                  title="Refresh the page with the recommendated movies"
+                  mouseEnterDelay={0.5}
+                >
+                  <RedoOutlined
+                    key="shuffle"
+                    onClick={() => {
+                      if (!props.isFavoPage) {
+                        props.onUserClick(i);
+                      }
+                    }}
+                  />
+                  ,
+                </Tooltip>,
+              ]}
+            >
+              <Meta
+                title={movieInfo.title}
+                description={
+                  movieInfo.overview.length > 200
+                    ? movieInfo.overview.substring(0, 200) + "..."
+                    : movieInfo.overview
+                }
+              />
+            </Card>
+          </Link>
         </div>
       </Col>
     );
