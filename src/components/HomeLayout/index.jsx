@@ -344,7 +344,7 @@ export default class HomeLayout extends React.Component {
             >
               Favorites
             </Menu.Item>
-            <Menu.Item
+            {/* <Menu.Item
               key="3"
               icon={<HistoryOutlined />}
               onClick={this.handleMenuClick}
@@ -357,7 +357,7 @@ export default class HomeLayout extends React.Component {
               onClick={this.handleMenuClick}
             >
               Profile
-            </Menu.Item>
+            </Menu.Item> */}
             <Menu.Item
               key="5"
               icon={<LogoutOutlined />}

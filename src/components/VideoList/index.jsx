@@ -2,8 +2,11 @@ import React from "react";
 import "antd/dist/antd.css";
 import "./index.css";
 import { Link } from "react-router-dom";
-import { Row, Col, Card, Skeleton, Tooltip } from "antd";
+import { Row, Col, Card, Skeleton, Tooltip, Modal } from "antd";
 import { HeartOutlined, RedoOutlined, HeartTwoTone } from "@ant-design/icons";
+import ProfilePage from "../MovieProfile/index";
+import { IP_ADDRESS, MOVIE_TRAILER_LINK, get } from "../../api/base";
+
 const { Meta } = Card;
 
 function repeat(item, times) {
@@ -47,6 +50,10 @@ const coverImagePH =
 const VideoList = (props) => {
   //   let movies = props.movies;
   let movies = props.movies;
+  let [visible, setModal] = React.useState(false);
+  let [clicked, setClicked] = React.useState({});
+  let [playing, setPlaying] = React.useState(false);
+
   const colCounts = 3;
   const lgColCounts = 4;
   const smColCounts = 2;
@@ -78,62 +85,100 @@ const VideoList = (props) => {
         lg={24 / lgColCounts}
       >
         <div>
-          <Link to={`../movie/${movieInfo.id}`}>
-            <Card
-              className="img-hover-zoom"
-              onError={() => {
-                console.log(`unfound image for ${movieInfo.title}`);
-                props.addFailedImage(i);
-              }}
-              hoverable
-              style={{
-                width: "220px",
-              }}
-              cover={
-                <img
-                  alt={movieInfo.title}
-                  src={
-                    props.failedImages.includes(i)
-                      ? coverImagePH
-                      : imageAdress + movieInfo["poster_path"]
-                  }
-                />
-              }
-              actions={[
-                heartButton,
-                <Tooltip
-                  title="Refresh the page with the recommendated movies"
-                  mouseEnterDelay={0.5}
-                >
-                  <RedoOutlined
-                    key="shuffle"
-                    onClick={() => {
-                      if (!props.isFavoPage) {
-                        props.onUserClick(i);
-                      }
-                    }}
-                  />
-                  ,
-                </Tooltip>,
-              ]}
-            >
-              <Meta
-                title={movieInfo.title}
-                description={
-                  movieInfo.overview.length > 200
-                    ? movieInfo.overview.substring(0, 200) + "..."
-                    : movieInfo.overview
+          <Card
+            className="img-hover-zoom"
+            onError={() => {
+              console.log(`unfound image for ${movieInfo.title}`);
+              props.addFailedImage(i);
+            }}
+            hoverable
+            style={{
+              width: "220px",
+            }}
+            cover={
+              <img
+                alt={movieInfo.title}
+                onClick={() => {
+                  //open up modal for the video
+                  get(IP_ADDRESS + MOVIE_TRAILER_LINK + movieInfo.id)
+                    .then((d) => {
+                      movieInfo["trailer"] = d["trailer"];
+                    })
+                    .finally(() => {
+                      setClicked(movieInfo);
+                      setModal(true);
+                    });
+                }}
+                src={
+                  props.failedImages.includes(i)
+                    ? coverImagePH
+                    : imageAdress + movieInfo["poster_path"]
                 }
               />
-            </Card>
-          </Link>
+            }
+            actions={[
+              heartButton,
+              <Tooltip
+                title="Refresh the page with the recommendated movies"
+                mouseEnterDelay={0.5}
+              >
+                <RedoOutlined
+                  key="shuffle"
+                  onClick={() => {
+                    if (!props.isFavoPage) {
+                      props.onUserClick(i);
+                    }
+                  }}
+                />
+                ,
+              </Tooltip>,
+            ]}
+          >
+            <Meta
+              title={movieInfo.title}
+              description={
+                movieInfo.overview.length > 200
+                  ? movieInfo.overview.substring(0, 200) + "..."
+                  : movieInfo.overview
+              }
+            />
+          </Card>
         </div>
       </Col>
     );
   });
   // clean the last row that might be less than colCounts
   rows = <Row gutter={[vGutter, hGutter]}>{movieCols}</Row>;
-  return <React.Fragment>{rows}</React.Fragment>;
+  return (
+    <React.Fragment>
+      {rows}
+      <Modal
+        title={
+          <div
+            style={{
+              width: "100%",
+              cursor: "move",
+            }}
+          >
+            {clicked.title}
+          </div>
+        }
+        onCancel={() => {
+          setModal(false);
+          setPlaying(false);
+        }}
+        width={950}
+        bodyStyle={{
+          padding: "0",
+        }}
+        visible={visible}
+        cancelButtonProps={{ style: { display: "none" } }}
+        okButtonProps={{ style: { display: "none" } }}
+      >
+        <ProfilePage movie={clicked} playing={playing}></ProfilePage>
+      </Modal>
+    </React.Fragment>
+  );
 };
 
 export default VideoList;

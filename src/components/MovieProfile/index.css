@@ -1,8 +1,7 @@
-
 .rate {
   float: right;
   right: 15%;
-  color: white
+  color: white;
 }
 
 .page-box {
@@ -10,7 +9,7 @@
   background-color: var(--backColor);
 }
 
-.movie-page{
+.movie-page {
   position: relative;
-  padding: 50px 10%;
+  padding: 0;
 }
