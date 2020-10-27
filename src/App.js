@@ -1,13 +1,18 @@
 import React from "react";
-import ChatBotWindow from "./components/ChatBot/ChatBotWindow";
-import VideoList from "./components/VideoList/";
-import HomeLayout from "./components/HomeLayout/";
+import { BrowserRouter as Router } from "react-router-dom";
 import "./App.css";
+import Routing from "./routes/routing";
 
-const App = () => (
-  <div className="App">
-    <HomeLayout />
-  </div>
-);
+const App = () => {
+  const [user, setUser] = React.useState({});
+
+  return (
+    <div className="App">
+      <Router>
+        <Routing user={user} setUser={setUser} />
+      </Router>
+    </div>
+  );
+};
 
 export default App;

@@ -17,6 +17,7 @@ class MessageParser {
     this.actionProvider.setActionProvider(this.actionProvider.nextQuestion);
     this.actionProvider.onEnter(message);
 
+
     // console.log(this.state);
     // if (this.state.questions.length) {
     //   this.actionProvider.nextQuestion(this.state.questions);
@@ -25,6 +26,7 @@ class MessageParser {
     //   this.actionProvider.endSession();
     // }
   }
+
 }
 
 export default MessageParser;
