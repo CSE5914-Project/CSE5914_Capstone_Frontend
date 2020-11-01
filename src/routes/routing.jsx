@@ -7,9 +7,9 @@ import Page404 from "../components/404/index";
 
 const Web = (props) => (
   <Switch>
-    <Route exact path="/" component={HomeLayout} />
+    <Route exact path="/" render={() => <SignInUp setUser={props.setUser} />} />
+    <Route exact path="/home" render={() => <HomeLayout user={props.user} />} />
     <Route exact path="/movie/:id" component={ProfilePage} />
-    <Route exact path="/signin" component={SignInUp} />
     <Route component={Page404} />
   </Switch>
 );

@@ -1,9 +1,12 @@
 import React from "react";
 import "antd/dist/antd.css";
 import "./index.css";
-import { Link } from 'react-router-dom';
-import { Row, Col, Card, Skeleton, Tooltip } from "antd";
-import { HeartOutlined, RedoOutlined } from "@ant-design/icons";
+import { Link } from "react-router-dom";
+import { Row, Col, Card, Skeleton, Tooltip, Modal } from "antd";
+import { HeartOutlined, RedoOutlined, HeartTwoTone } from "@ant-design/icons";
+import ProfilePage from "../MovieProfile/index";
+import { IP_ADDRESS, MOVIE_TRAILER_LINK, get } from "../../api/base";
+
 const { Meta } = Card;
 
 function repeat(item, times) {
@@ -27,7 +30,8 @@ const dummyMovies = repeat(
 
 const imageAdress = "https://image.tmdb.org/t/p/w220_and_h330_face/";
 
-const coverImagePH = "https://critics.io/img/movies/poster-placeholder.png";
+const coverImagePH =
+  "https://php7.joblo.com/assets/images/movie-database/placeholder.jpg";
 
 /**
  * Component that renders a list of videos for recommendtaions
@@ -46,14 +50,33 @@ const coverImagePH = "https://critics.io/img/movies/poster-placeholder.png";
 const VideoList = (props) => {
   //   let movies = props.movies;
   let movies = props.movies;
+  let [visible, setModal] = React.useState(false);
+  let [clicked, setClicked] = React.useState({});
+  let [playing, setPlaying] = React.useState(false);
+
   const colCounts = 3;
   const lgColCounts = 4;
   const smColCounts = 2;
   const hGutter = 48;
   const vGutter = 48;
   let rows = [];
-  // render movie cards based on the movieInfo
   let movieCols = movies.map((movieInfo, i) => {
+    let isFavo = movieInfo.id in props.favoList;
+    let heartButton = (
+      <HeartOutlined
+        key="favorite"
+        onClick={() => props.addFavorite(movieInfo)}
+      />
+    );
+    if (isFavo) {
+      heartButton = (
+        <HeartTwoTone
+          key="favorite"
+          twoToneColor="#eb2f96"
+          onClick={() => props.addFavorite(movieInfo)}
+        />
+      );
+    }
     return (
       <Col
         key={i.toString()}
@@ -63,32 +86,49 @@ const VideoList = (props) => {
       >
         <div>
           <Card
+            className="img-hover-zoom"
             onError={() => {
               console.log(`unfound image for ${movieInfo.title}`);
               props.addFailedImage(i);
             }}
             hoverable
+            style={{
+              width: "220px",
+            }}
             cover={
-                <Link to={`../movie/${movieInfo.id}`}>
               <img
                 alt={movieInfo.title}
+                onClick={() => {
+                  //open up modal for the video
+                  get(IP_ADDRESS + MOVIE_TRAILER_LINK + movieInfo.id)
+                    .then((d) => {
+                      movieInfo["trailer"] = d["trailer"];
+                    })
+                    .finally(() => {
+                      setClicked(movieInfo);
+                      setModal(true);
+                    });
+                }}
                 src={
                   props.failedImages.includes(i)
                     ? coverImagePH
                     : imageAdress + movieInfo["poster_path"]
                 }
               />
-              </Link>
             }
             actions={[
-              <HeartOutlined key="favorite" />,
+              heartButton,
               <Tooltip
                 title="Refresh the page with the recommendated movies"
                 mouseEnterDelay={0.5}
               >
                 <RedoOutlined
                   key="shuffle"
-                  onClick={() => props.onUserClick(i)}
+                  onClick={() => {
+                    if (!props.isFavoPage) {
+                      props.onUserClick(i);
+                    }
+                  }}
                 />
                 ,
               </Tooltip>,
@@ -109,7 +149,36 @@ const VideoList = (props) => {
   });
   // clean the last row that might be less than colCounts
   rows = <Row gutter={[vGutter, hGutter]}>{movieCols}</Row>;
-  return <React.Fragment>{rows}</React.Fragment>;
+  return (
+    <React.Fragment>
+      {rows}
+      <Modal
+        title={
+          <div
+            style={{
+              width: "100%",
+              cursor: "move",
+            }}
+          >
+            {clicked.title}
+          </div>
+        }
+        onCancel={() => {
+          setModal(false);
+          setPlaying(false);
+        }}
+        width={950}
+        bodyStyle={{
+          padding: "0",
+        }}
+        visible={visible}
+        cancelButtonProps={{ style: { display: "none" } }}
+        okButtonProps={{ style: { display: "none" } }}
+      >
+        <ProfilePage movie={clicked} playing={playing}></ProfilePage>
+      </Modal>
+    </React.Fragment>
+  );
 };
 
 export default VideoList;

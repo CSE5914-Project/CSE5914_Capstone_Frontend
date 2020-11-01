@@ -4,10 +4,16 @@ export const IP_ADDRESS = "http://127.0.0.1:8000/";
 export const GET_QUESTION = "api/get_all_question/";
 export const GET_INTIAL_MOVIE = "api/get_popular_movies/";
 export const POST_ANSWER = "api/post_answer/";
-export const RESET_ANSWER = "api/reset_server/";
+export const RESET_SERVER = "api/reset_server/";
 export const MOVIE_REC = "api/get_recommendation_for_movie/?movie_id=";
 export const MOVIE_PROFILE = "api/movie/?movie_id=";
-export const MOVIE_TRAILER_LINK = "api/get_movie_trailer_link/?movie_id="
+export const MOVIE_TRAILER_LINK = "api/get_movie_trailer_link/?movie_id=";
+export const GET_USER = "api/get_user_info/";
+export const UPDATE_USER = "api/update_user_info/?";
+export const CREATE_SESSION = "api/create_guest_session/?";
+export const GET_FAVO_LIST = "api/get_current_favorite_list/";
+export const ADD_FAVO_LIST = "api/add_a_favorite_movie/?";
+export const REMOVE_FAVO_LIST = "api/remove_a_favorite_movie/?";
 //export const GET_LATEST_MOVIE ="api/get_latest_movie/?top_n=10";
 
 export const get = (url) => {
