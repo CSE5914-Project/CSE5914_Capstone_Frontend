@@ -2,7 +2,7 @@ import React from "react";
 import "antd/dist/antd.css";
 import "./index.css";
 import { Link } from "react-router-dom";
-import { Row, Col, Card, Skeleton, Tooltip, Modal } from "antd";
+import { Row, Col, Card, Skeleton, Tooltip, Modal, Empty } from "antd";
 import { HeartOutlined, RedoOutlined, HeartTwoTone } from "@ant-design/icons";
 import ProfilePage from "../MovieProfile/index";
 import { IP_ADDRESS, MOVIE_TRAILER_LINK, get } from "../../api/base";
@@ -149,6 +149,13 @@ const VideoList = (props) => {
   });
   // clean the last row that might be less than colCounts
   rows = <Row gutter={[vGutter, hGutter]}>{movieCols}</Row>;
+  if (!movieCols.length) {
+    rows = (
+      <div style={{ height: "100vh" }}>
+        <Empty style={{ height: "-webkit-fill-available" }} />{" "}
+      </div>
+    );
+  }
   return (
     <React.Fragment>
       {rows}

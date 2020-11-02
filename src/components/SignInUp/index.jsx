@@ -101,15 +101,16 @@ export default class SignInUp extends React.Component {
       if (user["username"] === this.state.username) {
         // found exsting session
         this.props.setUser({
-          username: user["username"],
-          age: user["age"],
-          lang: user["language"],
-        });
-
-        this.setState({
-          loggedIn: true,
-          modalLoading: false,
-        });
+            username: user["username"],
+            age: user["age"],
+            lang: user["language"],
+          })
+          .then(() => {
+            this.setState({
+              loggedIn: true,
+              modalLoading: false,
+            });
+          });
       } else if (this.state.newSession) {
         get(IP_ADDRESS + RESET_SERVER).then(() => {
           get(
@@ -117,10 +118,17 @@ export default class SignInUp extends React.Component {
               CREATE_SESSION +
               `username=${this.state.username}&age=${this.state.age}&language=${this.state.lang}`
           ).then((data) => {
-            this.setState({
-              loggedIn: true,
-              modalLoading: false,
-            });
+            this.props.setUser({
+                username: user["username"],
+                age: user["age"],
+                lang: user["language"],
+              })
+              .then(() => {
+                this.setState({
+                  loggedIn: true,
+                  modalLoading: false,
+                });
+              });
           });
         });
       } else {
@@ -251,7 +259,10 @@ export default class SignInUp extends React.Component {
               {[...Array(4).keys()].map((i) => {
                 return (
                   <Col span={6} height={"250px"}>
-                    <Image src={`${imageAdress}${this.state.posterLink[i]}`} />
+                    <Image
+                      src={`${imageAdress}${this.state.posterLink[i]}`}
+                      preview={false}
+                    />
                   </Col>
                 );
               })}
@@ -264,6 +275,7 @@ export default class SignInUp extends React.Component {
                   <Col span={6} height={"250px"}>
                     <Image
                       src={`${imageAdress}${this.state.posterLink[i + 4 * 1]}`}
+                      preview={false}
                     />
                   </Col>
                 );
@@ -277,6 +289,7 @@ export default class SignInUp extends React.Component {
                   <Col span={6} height={"250px"}>
                     <Image
                       src={`${imageAdress}${this.state.posterLink[i + 4 * 2]}`}
+                      preview={false}
                     />
                   </Col>
                 );
@@ -290,6 +303,7 @@ export default class SignInUp extends React.Component {
                   <Col span={6} height={"250px"}>
                     <Image
                       src={`${imageAdress}${this.state.posterLink[i + 4 * 3]}`}
+                      preview={false}
                     />
                   </Col>
                 );

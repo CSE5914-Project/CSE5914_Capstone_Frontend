@@ -46,6 +46,7 @@ import {
 } from "../../api/base";
 import { createChatBotMessage } from "react-chatbot-kit";
 import MovieProfile from "../MovieProfile/";
+import strings from "./lang.js";
 
 const { Header, Sider, Content, Footer } = Layout;
 const { TextArea } = Input;
@@ -58,24 +59,28 @@ const openNotificationWithIcon = (type) => {
 };
 
 export default class HomeLayout extends React.Component {
-  state = {
-    collapsed: false,
-    movieList: [],
-    botMessage: "",
-    botActionProvider: () => {},
-    failedImages: [],
-    movieLoadingMore: false,
-    /*
-     *  one of the three enums: ["popular", "byId", "byGenere"]
-     */
-    movieSourceState: "popular",
-    pageNumber: 1,
-    reachedEnd: false,
-    lastRecMovieId: -1,
-    lastUserText: "",
-    tabKey: "1",
-    favoList: [],
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      collapsed: false,
+      movieList: [],
+      botMessage: "",
+      botActionProvider: () => {},
+      failedImages: [],
+      movieLoadingMore: false,
+      /*
+       *  one of the three enums: ["popular", "byId", "byGenere"]
+       */
+      movieSourceState: "popular",
+      pageNumber: 1,
+      reachedEnd: false,
+      lastRecMovieId: -1,
+      lastUserText: "",
+      tabKey: "1",
+      favoList: [],
+      user: props.user,
+    };
+  }
 
   toggle = () => {
     this.setState({
@@ -283,6 +288,7 @@ export default class HomeLayout extends React.Component {
   }
 
   render() {
+    console.log(this.props.user);
     if (this.state.tabKey === "5") {
       return <Redirect to="/"></Redirect>;
     }
@@ -335,14 +341,18 @@ export default class HomeLayout extends React.Component {
               icon={<FireOutlined />}
               onClick={this.handleMenuClick}
             >
-              Recent Releases
+              {
+                strings[this.props.user.lang ? this.props.user.lang : "en"][
+                  "rl"
+                ]
+              }
             </Menu.Item>
             <Menu.Item
               key="2"
               icon={<HeartOutlined />}
               onClick={this.handleMenuClick}
             >
-              Favorites
+              {strings[this.props.user.lang ? this.props.user.lang : "en"]["f"]}
             </Menu.Item>
             {/* <Menu.Item
               key="3"
@@ -363,7 +373,11 @@ export default class HomeLayout extends React.Component {
               icon={<LogoutOutlined />}
               onClick={this.handleMenuClick}
             >
-              Sign Out
+              {
+                strings[this.props.user.lang ? this.props.user.lang : "en"][
+                  "so"
+                ]
+              }
             </Menu.Item>
           </Menu>
         </Sider>
