@@ -13,7 +13,7 @@ const config = {
     //   delay: 800,
     // }),
   ],
-  lang: "yes",
+  lang: "no",
   customComponents: {
     botAvatar: (props) => <BotAvatar {...props} />,
   },

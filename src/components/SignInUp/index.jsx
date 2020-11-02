@@ -21,6 +21,8 @@ import {
   get,
   post,
   CREATE_SESSION,
+  USER_LOGIN,
+  USER_LOGOUT,
   RESET_SERVER,
   GET_USER,
 } from "../../api/base";
@@ -96,48 +98,32 @@ export default class SignInUp extends React.Component {
       modalLoading: true,
     });
 
-    // see if there is already a session for this user
-    get(IP_ADDRESS + GET_USER).then((user) => {
-      if (user["username"] === this.state.username) {
-        // found exsting session
-        this.props.setUser({
-            username: user["username"],
-            age: user["age"],
-            lang: user["language"],
-          })
-          .then(() => {
+    get(IP_ADDRESS + USER_LOGIN + this.state["username"])
+      .then(() => {
+        this.setState({
+          loggedIn: true,
+          modalLoading: false,
+        });
+      })
+      .catch((err) => {
+        if (this.state.newSession) {
+          get(
+            IP_ADDRESS +
+              CREATE_SESSION +
+              `username=${this.state.username}&age=${this.state.age}&language=${this.state.lang}`
+          ).then(() => {
             this.setState({
               loggedIn: true,
               modalLoading: false,
             });
           });
-      } else if (this.state.newSession) {
-        get(IP_ADDRESS + RESET_SERVER).then(() => {
-          get(
-            IP_ADDRESS +
-              CREATE_SESSION +
-              `username=${this.state.username}&age=${this.state.age}&language=${this.state.lang}`
-          ).then((data) => {
-            this.props.setUser({
-                username: user["username"],
-                age: user["age"],
-                lang: user["language"],
-              })
-              .then(() => {
-                this.setState({
-                  loggedIn: true,
-                  modalLoading: false,
-                });
-              });
+        } else {
+          this.setState({
+            modalLoading: false,
+            newSession: true,
           });
-        });
-      } else {
-        this.setState({
-          modalLoading: false,
-          newSession: true,
-        });
-      }
-    });
+        }
+      });
   };
 
   handleCancel = () => {

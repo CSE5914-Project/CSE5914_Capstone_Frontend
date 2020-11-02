@@ -60,8 +60,10 @@ const VideoList = (props) => {
   const hGutter = 48;
   const vGutter = 48;
   let rows = [];
+
   let movieCols = movies.map((movieInfo, i) => {
     let isFavo = movieInfo.id in props.favoList;
+
     let heartButton = (
       <HeartOutlined
         key="favorite"

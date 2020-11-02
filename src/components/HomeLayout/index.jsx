@@ -38,8 +38,10 @@ import {
   GET_INTIAL_MOVIE,
   GET_FAVO_LIST,
   POST_ANSWER,
+  USER_LOGOUT,
   ADD_FAVO_LIST,
   REMOVE_FAVO_LIST,
+  GET_USER,
   MOVIE_REC,
   get,
   post,
@@ -59,28 +61,25 @@ const openNotificationWithIcon = (type) => {
 };
 
 export default class HomeLayout extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      collapsed: false,
-      movieList: [],
-      botMessage: "",
-      botActionProvider: () => {},
-      failedImages: [],
-      movieLoadingMore: false,
-      /*
-       *  one of the three enums: ["popular", "byId", "byGenere"]
-       */
-      movieSourceState: "popular",
-      pageNumber: 1,
-      reachedEnd: false,
-      lastRecMovieId: -1,
-      lastUserText: "",
-      tabKey: "1",
-      favoList: [],
-      user: props.user,
-    };
-  }
+  state = {
+    collapsed: false,
+    movieList: [],
+    botMessage: "",
+    botActionProvider: () => {},
+    failedImages: [],
+    movieLoadingMore: false,
+    /*
+     *  one of the three enums: ["popular", "byId", "byGenere"]
+     */
+    movieSourceState: "popular",
+    pageNumber: 1,
+    reachedEnd: false,
+    lastRecMovieId: -1,
+    lastUserText: "",
+    tabKey: "1",
+    favoList: [],
+    user: {},
+  };
 
   toggle = () => {
     this.setState({
@@ -153,7 +152,7 @@ export default class HomeLayout extends React.Component {
       get(IP_ADDRESS + REMOVE_FAVO_LIST + `movie_id=${movie["id"]}`).then(
         (d) => {
           this.setState({
-            favoList: d["favorite_list"],
+            favoList: d["Current favorite_list"],
           });
         }
       );
@@ -161,7 +160,7 @@ export default class HomeLayout extends React.Component {
       // add
       get(IP_ADDRESS + ADD_FAVO_LIST + `movie_id=${movie["id"]}`).then((d) => {
         this.setState({
-          favoList: d["favorite_list"],
+          favoList: d["Current favorite_list"],
         });
       });
     }
@@ -174,9 +173,17 @@ export default class HomeLayout extends React.Component {
   };
 
   handleMenuClick = (e) => {
-    this.setState({
-      tabKey: e.key,
-    });
+    if (e.key === "5") {
+      get(IP_ADDRESS + USER_LOGOUT).then(() => {
+        this.setState({
+          tabKey: e.key,
+        });
+      });
+    } else {
+      this.setState({
+        tabKey: e.key,
+      });
+    }
   };
 
   handleScrollToBottom = () => {
@@ -266,7 +273,8 @@ export default class HomeLayout extends React.Component {
     Promise.all([
       get(IP_ADDRESS + GET_QUESTION),
       get(IP_ADDRESS + GET_INTIAL_MOVIE + "?top_n=20&page=1"),
-    ]).then(([questions, movies]) => {
+      get(IP_ADDRESS + GET_USER),
+    ]).then(([questions, movies, user]) => {
       let curQuestions = [];
       questions.forEach((q) => {
         curQuestions.push(q["questionString"]);
@@ -276,6 +284,7 @@ export default class HomeLayout extends React.Component {
         movieList: movies["movieList"],
         // only the genre question for the demo2
         botMessage: curQuestions[1],
+        user: user,
       });
     });
 
@@ -285,10 +294,11 @@ export default class HomeLayout extends React.Component {
         favoList: d["favorite_list"],
       });
     });
+
+    window.scrollTo(0, 0);
   }
 
   render() {
-    console.log(this.props.user);
     if (this.state.tabKey === "5") {
       return <Redirect to="/"></Redirect>;
     }
@@ -342,9 +352,9 @@ export default class HomeLayout extends React.Component {
               onClick={this.handleMenuClick}
             >
               {
-                strings[this.props.user.lang ? this.props.user.lang : "en"][
-                  "rl"
-                ]
+                strings[
+                  this.state.user.language ? this.state.user.language : "en"
+                ]["rl"]
               }
             </Menu.Item>
             <Menu.Item
@@ -352,7 +362,11 @@ export default class HomeLayout extends React.Component {
               icon={<HeartOutlined />}
               onClick={this.handleMenuClick}
             >
-              {strings[this.props.user.lang ? this.props.user.lang : "en"]["f"]}
+              {
+                strings[
+                  this.state.user.language ? this.state.user.language : "en"
+                ]["f"]
+              }
             </Menu.Item>
             {/* <Menu.Item
               key="3"
@@ -374,9 +388,9 @@ export default class HomeLayout extends React.Component {
               onClick={this.handleMenuClick}
             >
               {
-                strings[this.props.user.lang ? this.props.user.lang : "en"][
-                  "so"
-                ]
+                strings[
+                  this.state.user.language ? this.state.user.language : "en"
+                ]["so"]
               }
             </Menu.Item>
           </Menu>
@@ -446,7 +460,7 @@ export default class HomeLayout extends React.Component {
               displayMessage={this.state.botMessage}
               onEnter={this.onUserEnterText}
               setActionProvider={this.setActionProvider}
-              username={this.props.user.username}
+              username={this.state.user.username}
             />
           </Content>
           <BottomScrollListener onBottom={this.handleScrollToBottom}>
