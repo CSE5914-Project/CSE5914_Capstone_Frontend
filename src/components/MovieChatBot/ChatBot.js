@@ -13,6 +13,7 @@ const ChatBot = (props) => {
   const [showChatbot, toggleChatbot] = useState(true);
   // inject the fetched questions to the state
   if (props.displayMessage && props.displayMessage.length) {
+    console.log(props.displayMessage);
     config.state["question"][0] = props.displayMessage;
   }
 
@@ -31,6 +32,7 @@ const ChatBot = (props) => {
               config={config}
               messageParser={MessageParser}
               actionProvider={ActionProvider}
+              headerText={props.headerText}
             />
           }
         />

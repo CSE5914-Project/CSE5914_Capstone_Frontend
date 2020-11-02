@@ -286,6 +286,7 @@ export default class HomeLayout extends React.Component {
         botMessage: curQuestions[1],
         user: user,
       });
+      window.scrollTo(0, 0);
     });
 
     //fetch user info
@@ -294,8 +295,6 @@ export default class HomeLayout extends React.Component {
         favoList: d["favorite_list"],
       });
     });
-
-    window.scrollTo(0, 0);
   }
 
   render() {
@@ -461,6 +460,11 @@ export default class HomeLayout extends React.Component {
               onEnter={this.onUserEnterText}
               setActionProvider={this.setActionProvider}
               username={this.state.user.username}
+              headerText={
+                strings[
+                  this.state.user.language ? this.state.user.language : "en"
+                ]["mh"]
+              }
             />
           </Content>
           <BottomScrollListener onBottom={this.handleScrollToBottom}>
