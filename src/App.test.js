@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import App from './App';
+import userEvent from '@testing-library/user-event'
 
 window.matchMedia = window.matchMedia || function() {
   return {
@@ -22,3 +23,13 @@ test('renders correct text', () => {
   getByText("FilmPedia");
   getByText("Access Now!");
 });
+
+test('user click on Access Now button', () => {
+  const { getByText } = render(<App />);
+
+  userEvent.click(getByText("Access Now!"));
+  getByText("Quick Login");
+  getByText("Return");
+  getByText("Submit");
+  getByText("Username");
+})
