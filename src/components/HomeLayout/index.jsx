@@ -49,6 +49,7 @@ import {
 } from "../../api/base";
 import { createChatBotMessage } from "react-chatbot-kit";
 import MovieProfile from "../MovieProfile/";
+import UserProfile from "../UserProfile/";
 import strings from "./lang.js";
 
 const { Header, Sider, Content, Footer } = Layout;
@@ -81,6 +82,8 @@ export default class HomeLayout extends React.Component {
     tabKey: "1",
     favoList: [],
     user: {},
+    logoutLoading: false,
+    genreLoading: false,
   };
 
   toggle = () => {
@@ -97,6 +100,9 @@ export default class HomeLayout extends React.Component {
   };
 
   onUserEnterText = (text) => {
+    this.setState({
+      genreLoading: true,
+    });
     // get the updated list and resopnse
     get(
       IP_ADDRESS +
@@ -104,25 +110,31 @@ export default class HomeLayout extends React.Component {
         "?questionCode=2&answerText=" +
         text +
         "&page=1"
-    ).then((data) => {
-      // update the set state
-      this.state.botActionProvider(data.robotResponse);
-      if (data["movieList"]["results"].length > 0) {
-        openNotificationWithIcon("success");
+    )
+      .then((data) => {
+        // update the set state
+        this.state.botActionProvider(data.robotResponse);
+        if (data["movieList"]["results"].length > 0) {
+          openNotificationWithIcon("success");
+          this.setState({
+            botMessage: data.robotResponse,
+            movieList: data["movieList"]["results"],
+            failedImages: [],
+            movieSourceState: "byGenre",
+            pageNumber: 1,
+            reachedEnd: false,
+            lastUserText: text,
+          });
+          window.scrollTo(0, 0);
+        } else {
+          openNotificationWithIcon("info");
+        }
+      })
+      .finally(() => {
         this.setState({
-          botMessage: data.robotResponse,
-          movieList: data["movieList"]["results"],
-          failedImages: [],
-          movieSourceState: "byGenre",
-          pageNumber: 1,
-          reachedEnd: false,
-          lastUserText: text,
+          genreLoading: false,
         });
-        window.scrollTo(0, 0);
-      } else {
-        openNotificationWithIcon("info");
-      }
-    });
+      });
   };
 
   onUserClick = (index) => {
@@ -176,6 +188,9 @@ export default class HomeLayout extends React.Component {
 
   handleMenuClick = (e) => {
     if (e.key === "5") {
+      this.setState({
+        logoutLoading: true,
+      });
       get(IP_ADDRESS + USER_LOGOUT).then(() => {
         this.setState({
           tabKey: e.key,
@@ -315,193 +330,217 @@ export default class HomeLayout extends React.Component {
     }
 
     if (this.state.tabKey === "5") {
+      this.setState({
+        logoutLoading: false,
+      });
       return <Redirect to="/"></Redirect>;
     }
 
     // console.log("rednered" + this.state.botMessage);
     return (
-      <Layout className="outer-layout">
-        <Sider
-          trigger={null}
-          collapsible
-          collapsed={this.state.collapsed}
-          style={
-            {
-              // position: "-webkit-sticky" /* Safari */,
-              // position: "",
-              // height: "100vh",
+      <Spin
+        tip="Signing Out..."
+        spinning={this.state.logoutLoading}
+        size="large"
+      >
+        <Layout className="outer-layout">
+          <Sider
+            trigger={null}
+            collapsible
+            collapsed={this.state.collapsed}
+            style={
+              {
+                // position: "-webkit-sticky" /* Safari */,
+                // position: "",
+                // height: "100vh",
+              }
             }
-          }
-        >
-          {this.state.collapsed ? (
-            <h1
-              style={{
-                color: "white",
-                marginTop: "5%",
-                fontSize: "x-large",
-              }}
-            >
-              FP
-            </h1>
-          ) : (
-            <h1
-              style={{
-                color: "white",
-                marginTop: "5%",
-                fontSize: "x-large",
-              }}
-            >
-              FilmPedia
-            </h1>
-          )}
-
-          <Menu
-            theme="dark"
-            mode="inline"
-            defaultSelectedKeys={["1"]}
-            style={{
-              // position: "-webkit-sticky" /* Safari */,
-              position: "sticky",
-            }}
           >
-            <Menu.Item
-              key="1"
-              icon={<FireOutlined />}
-              onClick={this.handleMenuClick}
+            {this.state.collapsed ? (
+              <h1
+                style={{
+                  color: "white",
+                  marginTop: "5%",
+                  fontSize: "x-large",
+                }}
+              >
+                FP
+              </h1>
+            ) : (
+              <h1
+                style={{
+                  color: "white",
+                  marginTop: "5%",
+                  fontSize: "x-large",
+                }}
+              >
+                FilmPedia
+              </h1>
+            )}
+
+            <Menu
+              theme="dark"
+              mode="inline"
+              defaultSelectedKeys={["1"]}
+              style={{
+                // position: "-webkit-sticky" /* Safari */,
+                position: "sticky",
+              }}
             >
-              {
-                strings[
-                  this.state.user.language ? this.state.user.language : "en"
-                ]["rl"]
-              }
-            </Menu.Item>
-            <Menu.Item
-              key="2"
-              icon={<HeartOutlined />}
-              onClick={this.handleMenuClick}
-            >
-              {
-                strings[
-                  this.state.user.language ? this.state.user.language : "en"
-                ]["f"]
-              }
-            </Menu.Item>
-            {/* <Menu.Item
+              <Menu.Item
+                key="1"
+                icon={<FireOutlined />}
+                onClick={this.handleMenuClick}
+              >
+                {
+                  strings[
+                    this.state.user.language ? this.state.user.language : "en"
+                  ]["rl"]
+                }
+              </Menu.Item>
+              <Menu.Item
+                key="2"
+                icon={<HeartOutlined />}
+                onClick={this.handleMenuClick}
+              >
+                {
+                  strings[
+                    this.state.user.language ? this.state.user.language : "en"
+                  ]["f"]
+                }
+              </Menu.Item>
+              {/* <Menu.Item
               key="3"
               icon={<HistoryOutlined />}
               onClick={this.handleMenuClick}
             >
               History
-            </Menu.Item>
-            <Menu.Item
-              key="4"
-              icon={<UserOutlined />}
-              onClick={this.handleMenuClick}
-            >
-              Profile
             </Menu.Item> */}
+              <Menu.Item
+                key="4"
+                icon={<UserOutlined />}
+                onClick={this.handleMenuClick}
+              >
+                Profile
+              </Menu.Item>
 
-            <Menu.Item
-              key="5"
-              icon={<LogoutOutlined />}
-              onClick={this.handleMenuClick}
+              <Menu.Item
+                key="5"
+                icon={<LogoutOutlined />}
+                onClick={this.handleMenuClick}
+              >
+                {
+                  strings[
+                    this.state.user.language ? this.state.user.language : "en"
+                  ]["so"]
+                }
+              </Menu.Item>
+            </Menu>
+          </Sider>
+          <Layout className="site-layout">
+            <Header className="site-layout-background" style={{ padding: 0 }}>
+              {React.createElement(
+                this.state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
+                {
+                  className: "trigger",
+                  onClick: this.toggle,
+                }
+              )}
+              <Search
+                placeholder="input search text"
+                // onSearch={onSearch}
+                enterButton
+                size={"large"}
+                style={{ width: "50%", marginTop: "15px" }}
+              />
+            </Header>
+            <Content
+              className="site-layout-background"
+              style={{
+                margin: "24px 16px",
+                padding: 48,
+                minHeight: 280,
+                overflow: "scroll",
+              }}
             >
-              {
-                strings[
-                  this.state.user.language ? this.state.user.language : "en"
-                ]["so"]
-              }
-            </Menu.Item>
-          </Menu>
-        </Sider>
-        <Layout className="site-layout">
-          <Header className="site-layout-background" style={{ padding: 0 }}>
-            {React.createElement(
-              this.state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
-              {
-                className: "trigger",
-                onClick: this.toggle,
-              }
-            )}
-            <Search
-              placeholder="input search text"
-              // onSearch={onSearch}
-              enterButton
-              size={"large"}
-              style={{ width: "50%", marginTop: "15px" }}
-            />
-          </Header>
-          <Content
-            className="site-layout-background"
-            style={{
-              margin: "24px 16px",
-              padding: 48,
-              minHeight: 280,
-              overflow: "scroll",
-            }}
-          >
-            {this.state.tabKey === "1" ? (
-              <React.Fragment>
-                <VideoList
-                  movies={this.state.movieList}
-                  onUserClick={this.onUserClick}
-                  addFailedImage={this.addFailedImage}
-                  failedImages={this.state.failedImages}
-                  favoList={this.state.favoList}
-                  addFavorite={this.addToFavorite}
-                />
-                {this.state.movieLoadingMore && !this.state.reachedEnd ? (
-                  <Spin tip={"Fetching more movies..."} />
-                ) : (
-                  <div></div>
-                )}
-                {this.state.reachedEnd ? (
-                  <Divider dashed>The End of the World</Divider>
-                ) : null}
-              </React.Fragment>
-            ) : null}
+              {this.state.tabKey === "1" ? (
+                <React.Fragment>
+                  {this.state.genreLoading ? (
+                    <React.Fragment>
+                      <Spin
+                        spinning={this.state.genreLoading}
+                        size="large"
+                      ></Spin>
+                      <br />
+                      <br />
+                    </React.Fragment>
+                  ) : null}
+                  <VideoList
+                    movies={this.state.movieList}
+                    onUserClick={this.onUserClick}
+                    addFailedImage={this.addFailedImage}
+                    failedImages={this.state.failedImages}
+                    favoList={this.state.favoList}
+                    addFavorite={this.addToFavorite}
+                  />
+                  {this.state.movieLoadingMore && !this.state.reachedEnd ? (
+                    <Spin tip={"Fetching more movies..."} />
+                  ) : (
+                    <div></div>
+                  )}
+                  {this.state.reachedEnd ? (
+                    <Divider dashed>The End of the World</Divider>
+                  ) : null}
+                  <ChatBot
+                    displayMessage={this.state.botMessage}
+                    onEnter={this.onUserEnterText}
+                    setActionProvider={this.setActionProvider}
+                    username={this.state.user.username}
+                    headerText={
+                      strings[
+                        this.state.user.language
+                          ? this.state.user.language
+                          : "en"
+                      ]["mh"]
+                    }
+                    question={questionText}
+                  />
+                </React.Fragment>
+              ) : null}
 
-            {this.state.tabKey === "2" ? (
-              <React.Fragment>
-                <VideoList
-                  movies={Object.keys(this.state.favoList).map((id) => {
-                    return {
-                      id: this.state.favoList[id]["id"],
-                      overview: this.state.favoList[id]["overview"],
-                      title: this.state.favoList[id]["title"],
-                      poster_path: this.state.favoList[id]["poster_path"],
-                    };
-                  })}
-                  onUserClick={this.onUserClick}
-                  addFailedImage={this.addFailedImage}
-                  failedImages={this.state.failedImages}
-                  favoList={this.state.favoList}
-                  addFavorite={this.addToFavorite}
-                  isFavoPage={true}
-                />
-              </React.Fragment>
-            ) : null}
+              {this.state.tabKey === "2" ? (
+                <React.Fragment>
+                  <VideoList
+                    movies={Object.keys(this.state.favoList).map((id) => {
+                      return {
+                        id: this.state.favoList[id]["id"],
+                        overview: this.state.favoList[id]["overview"],
+                        title: this.state.favoList[id]["title"],
+                        poster_path: this.state.favoList[id]["poster_path"],
+                      };
+                    })}
+                    onUserClick={this.onUserClick}
+                    addFailedImage={this.addFailedImage}
+                    failedImages={this.state.failedImages}
+                    favoList={this.state.favoList}
+                    addFavorite={this.addToFavorite}
+                    isFavoPage={true}
+                  />
+                </React.Fragment>
+              ) : null}
 
-            <ChatBot
-              displayMessage={this.state.botMessage}
-              onEnter={this.onUserEnterText}
-              setActionProvider={this.setActionProvider}
-              username={this.state.user.username}
-              headerText={
-                strings[
-                  this.state.user.language ? this.state.user.language : "en"
-                ]["mh"]
-              }
-              question={questionText}
-            />
-          </Content>
-          <BottomScrollListener onBottom={this.handleScrollToBottom}>
-            <footer>
-              <p>The Footer. Filmpedia </p>
-            </footer>
-          </BottomScrollListener>
+              {this.state.tabKey === "4" ? (
+                <UserProfile user={this.state.user} />
+              ) : null}
+            </Content>
+            <BottomScrollListener onBottom={this.handleScrollToBottom}>
+              <footer>
+                <p>The Footer. Filmpedia </p>
+              </footer>
+            </BottomScrollListener>
+          </Layout>
         </Layout>
-      </Layout>
+      </Spin>
     );
   }
 }
