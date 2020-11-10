@@ -17,6 +17,7 @@ import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   LogoutOutlined,
+  AudioOutlined,
   UserOutlined,
   VideoCameraOutlined,
   UploadOutlined,
@@ -52,6 +53,7 @@ import strings from "./lang.js";
 
 const { Header, Sider, Content, Footer } = Layout;
 const { TextArea } = Input;
+const { Search } = Input;
 const { Meta } = Card;
 const openNotificationWithIcon = (type) => {
   notification[type]({
@@ -271,33 +273,47 @@ export default class HomeLayout extends React.Component {
 
   componentDidMount() {
     Promise.all([
-      get(IP_ADDRESS + GET_QUESTION),
       get(IP_ADDRESS + GET_INTIAL_MOVIE + "?top_n=20&page=1"),
       get(IP_ADDRESS + GET_USER),
-    ]).then(([questions, movies, user]) => {
-      let curQuestions = [];
-      questions.forEach((q) => {
-        curQuestions.push(q["questionString"]);
-      });
+    ]).then(([movies, user]) => {
+      setTimeout(() => {
+        get(IP_ADDRESS + GET_QUESTION).then((questions) => {
+          let curQuestions = [];
+          questions.forEach((q) => {
+            curQuestions.push(q["questionString"]);
+          });
 
-      this.setState({
-        movieList: movies["movieList"],
-        // only the genre question for the demo2
-        botMessage: curQuestions[1],
-        user: user,
-      });
-      window.scrollTo(0, 0);
-    });
+          document.getElementsByClassName(
+            "react-chatbot-kit-chat-input"
+          )[0].placeholder =
+            strings[user.language ? user.language : "en"]["ph"];
 
-    //fetch user info
-    get(IP_ADDRESS + GET_FAVO_LIST).then((d) => {
-      this.setState({
-        favoList: d["favorite_list"],
-      });
+          this.setState({
+            movieList: movies["movieList"],
+            // only the genre question for the demo2
+            botMessage: curQuestions[1],
+            user: user,
+          });
+          window.scrollTo(0, 0);
+        });
+
+        //fetch user info
+        get(IP_ADDRESS + GET_FAVO_LIST).then((d) => {
+          this.setState({
+            favoList: d["favorite_list"],
+          });
+        });
+      }, 0);
     });
   }
 
   render() {
+    if (this.state.user.language) {
+      var questionText = strings[this.state.user.language]["qp"];
+    } else {
+      var questionText = null;
+    }
+
     if (this.state.tabKey === "5") {
       return <Redirect to="/"></Redirect>;
     }
@@ -309,10 +325,13 @@ export default class HomeLayout extends React.Component {
           trigger={null}
           collapsible
           collapsed={this.state.collapsed}
-          style={{
-            // position: "-webkit-sticky" /* Safari */,
-            position: "sticky",
-          }}
+          style={
+            {
+              // position: "-webkit-sticky" /* Safari */,
+              // position: "",
+              // height: "100vh",
+            }
+          }
         >
           {this.state.collapsed ? (
             <h1
@@ -381,6 +400,7 @@ export default class HomeLayout extends React.Component {
             >
               Profile
             </Menu.Item> */}
+
             <Menu.Item
               key="5"
               icon={<LogoutOutlined />}
@@ -403,6 +423,13 @@ export default class HomeLayout extends React.Component {
                 onClick: this.toggle,
               }
             )}
+            <Search
+              placeholder="input search text"
+              // onSearch={onSearch}
+              enterButton
+              size={"large"}
+              style={{ width: "50%", marginTop: "15px" }}
+            />
           </Header>
           <Content
             className="site-layout-background"
@@ -465,6 +492,7 @@ export default class HomeLayout extends React.Component {
                   this.state.user.language ? this.state.user.language : "en"
                 ]["mh"]
               }
+              question={questionText}
             />
           </Content>
           <BottomScrollListener onBottom={this.handleScrollToBottom}>

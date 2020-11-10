@@ -25,3 +25,6 @@
   background: #fff;
 }
 
+.react-chatbot-kit-chat-input::-webkit-input-placeholder::before {
+  content: "asd";
+}

@@ -4,15 +4,15 @@ class MessageParser {
     this.state = state;
 
     // console.log(this.state);
-    if (this.state && this.state.question && this.state.question.length) {
-      const q = this.state.question[0];
-      console.log("here" + q);
-      this.actionProvider.clearQuestion();
-      this.actionProvider.nextQuestion(q);
-      // this.actionProvider.onEnter(q);
+    // if (this.state && this.state.question && this.state.question.length) {
+    //   const q = this.state.question[0];
+    //   console.log("here" + q);
+    //   this.actionProvider.clearQuestion();
+    //   this.actionProvider.nextQuestion(q);
+    //   // this.actionProvider.onEnter(q);
 
-      // console.log(q);
-    }
+    //   // console.log(q);
+    // }
   }
 
   parse(message) {
