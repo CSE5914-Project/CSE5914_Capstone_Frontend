@@ -16,6 +16,7 @@ export const ADD_FAVO_LIST = "api/add_a_favorite_movie/?";
 export const REMOVE_FAVO_LIST = "api/remove_a_favorite_movie/?";
 export const USER_LOGIN = "api/user_login/?username=";
 export const USER_LOGOUT = "api/user_logout/";
+export const SEARCH = "api/search_movie_by_keyword/";
 //export const GET_LATEST_MOVIE ="api/get_latest_movie/?top_n=10";
 
 export const get = (url) => {

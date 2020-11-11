@@ -39,6 +39,7 @@ import {
   GET_INTIAL_MOVIE,
   GET_FAVO_LIST,
   POST_ANSWER,
+  SEARCH,
   USER_LOGOUT,
   ADD_FAVO_LIST,
   REMOVE_FAVO_LIST,
@@ -95,6 +96,8 @@ export default class HomeLayout extends React.Component {
     logoutLoading: false,
     genreLoading: false,
     stateChangeMovies: [],
+    lastSearchWord: "",
+    searchLoading: false,
   };
 
   toggle = () => {
@@ -120,7 +123,7 @@ export default class HomeLayout extends React.Component {
         POST_ANSWER +
         "?questionCode=2&answerText=" +
         text +
-        "&page=1"
+        `&page=1&include_adult=${this.state.user.age === "17" ? false : true}`
     )
       .then((data) => {
         // update the set state
@@ -168,6 +171,31 @@ export default class HomeLayout extends React.Component {
       } else {
         openNotificationWithIcon("info");
       }
+    });
+  };
+
+  onSearch = (val, event) => {
+    window.scrollTo(0, 0);
+    this.setState({
+      searchLoading: true,
+    });
+
+    get(
+      IP_ADDRESS +
+        SEARCH +
+        `?keyword=${val}&page=1&include_adult=${
+          this.state.user.age === "17" ? false : true
+        }`
+    ).then((d) => {
+      this.setState({
+        movieList: d["movieList"]["results"],
+        failedImages: [],
+        movieSourceState: "bySearch",
+        pageNumber: 1,
+        reachedEnd: false,
+        searchLoading: false,
+        lastSearchWord: val,
+      });
     });
   };
 
@@ -224,6 +252,7 @@ export default class HomeLayout extends React.Component {
         tabKey: e.key,
       });
     }
+    window.scrollTo(0, 0);
   };
 
   handleScrollToBottom = () => {
@@ -258,7 +287,39 @@ export default class HomeLayout extends React.Component {
             this.state.lastRecMovieId +
             `&page=${this.state.pageNumber + 1}`
         ).then((data) => {
-          if (data["movieList"]["results"].length > 20) {
+          if (data["movieList"]["results"].length >= 20) {
+            this.setState({
+              pageNumber: this.state.pageNumber + 1,
+              movieList: this.state.movieList.concat(
+                data["movieList"]["results"]
+              ),
+              loadingMore: false,
+            });
+          } else if (data["movieList"]["results"].length > 0) {
+            this.setState({
+              pageNumber: this.state.pageNumber + 1,
+              movieList: this.state.movieList.concat(
+                data["movieList"]["results"]
+              ),
+              loadingMore: false,
+              reachedEnd: true,
+            });
+          } else {
+            this.setState({
+              loadingMore: false,
+              reachedEnd: true,
+            });
+          }
+        });
+      } else if (this.state.movieSourceState === "bySearch") {
+        get(
+          IP_ADDRESS +
+            SEARCH +
+            `?keyword=${this.state.lastSearchWord}&page=${
+              this.state.pageNumber + 1
+            }&include_adult=${this.state.user.age === "17" ? false : true}`
+        ).then((data) => {
+          if (data["movieList"]["results"].length >= 20) {
             this.setState({
               pageNumber: this.state.pageNumber + 1,
               movieList: this.state.movieList.concat(
@@ -288,7 +349,9 @@ export default class HomeLayout extends React.Component {
             POST_ANSWER +
             "?questionCode=2&answerText=" +
             this.state.lastUserText +
-            `&page=${this.state.pageNumber + 1}`
+            `&page=${this.state.pageNumber + 1}&include_adult=${
+              this.state.user.age === "17" ? false : true
+            }`
         ).then((data) => {
           if (data["movieList"]["results"].length > 0) {
             this.setState({
@@ -354,6 +417,23 @@ export default class HomeLayout extends React.Component {
         ele.style.display = "none";
       }
     };
+  }
+
+  componentDidUpdate() {
+    if (document.getElementsByClassName("chatbot-button-icon").length) {
+      document.getElementsByClassName(
+        "chatbot-button-icon"
+      )[0].onclick = () => {
+        let ele = document.getElementsByClassName(
+          "react-chatbot-kit-chat-container"
+        )[0];
+        if (ele.style.display === "none") {
+          ele.style.display = "";
+        } else {
+          ele.style.display = "none";
+        }
+      };
+    }
   }
 
   render() {
@@ -494,13 +574,25 @@ export default class HomeLayout extends React.Component {
                   onClick: this.toggle,
                 }
               )}
-              <Search
-                placeholder="input search text"
-                // onSearch={onSearch}
-                enterButton
-                size={"large"}
-                style={{ width: "50%", marginTop: "15px" }}
-              />
+              {this.state.tabKey === "1" ? (
+                <Search
+                  placeholder="input search text"
+                  // onSearch={onSearch}
+                  enterButton
+                  allowClear
+                  size={"large"}
+                  style={{
+                    width: "25%",
+                    marginTop: "13px",
+                    position: "absolute",
+                    left: 450,
+                    // position: "relative",
+                    // left: "0",
+                    // marginLeft: "0",
+                  }}
+                  onSearch={this.onSearch}
+                />
+              ) : null}
             </Header>
             <div
               style={{
@@ -520,10 +612,12 @@ export default class HomeLayout extends React.Component {
             >
               {this.state.tabKey === "1" ? (
                 <React.Fragment>
-                  {this.state.genreLoading ? (
+                  {this.state.genreLoading || this.state.searchLoading ? (
                     <React.Fragment>
                       <Spin
-                        spinning={this.state.genreLoading}
+                        spinning={
+                          this.state.genreLoading || this.state.searchLoading
+                        }
                         size="large"
                       ></Spin>
                       <br />
