@@ -25,6 +25,20 @@
   background: #fff;
 }
 
-.react-chatbot-kit-chat-input::-webkit-input-placeholder::before {
-  content: "asd";
+.site-layout .site-layout-background-2 {
+  background: #fff;
 }
+
+/* .ant-layout-sider {
+  height: 100vh;
+  position: fixed;
+}
+
+.ant-layout-header {
+  position: fixed;
+  left: 20px;
+}
+
+.site-layout-background-2 {
+  overflow: auto;
+} */

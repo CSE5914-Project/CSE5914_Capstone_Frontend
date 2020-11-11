@@ -348,13 +348,12 @@ export default class HomeLayout extends React.Component {
             trigger={null}
             collapsible
             collapsed={this.state.collapsed}
-            style={
-              {
-                // position: "-webkit-sticky" /* Safari */,
-                // position: "",
-                // height: "100vh",
-              }
-            }
+            style={{
+              overflow: "auto",
+              height: "100vh",
+              position: "fixed",
+              left: 0,
+            }}
           >
             {this.state.collapsed ? (
               <h1
@@ -421,7 +420,11 @@ export default class HomeLayout extends React.Component {
                 icon={<UserOutlined />}
                 onClick={this.handleMenuClick}
               >
-                Profile
+                {
+                  strings[
+                    this.state.user.language ? this.state.user.language : "en"
+                  ]["pf"]
+                }
               </Menu.Item>
 
               <Menu.Item
@@ -437,8 +440,19 @@ export default class HomeLayout extends React.Component {
               </Menu.Item>
             </Menu>
           </Sider>
-          <Layout className="site-layout">
-            <Header className="site-layout-background" style={{ padding: 0 }}>
+          <Layout
+            className="site-layout"
+            style={{ marginLeft: this.state.collapsed ? 80 : 200 }}
+          >
+            <Header
+              className="site-layout-background"
+              style={{
+                position: "fixed",
+                zIndex: 1,
+                width: "100%",
+                paddingLeft: "0",
+              }}
+            >
               {React.createElement(
                 this.state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
                 {
@@ -454,13 +468,20 @@ export default class HomeLayout extends React.Component {
                 style={{ width: "50%", marginTop: "15px" }}
               />
             </Header>
+            <div
+              style={{
+                padding: 30,
+                minHeight: 3,
+                // overflow: "scroll",
+              }}
+            ></div>
             <Content
-              className="site-layout-background"
+              className="site-layout-background-2"
               style={{
                 margin: "24px 16px",
                 padding: 48,
                 minHeight: 280,
-                overflow: "scroll",
+                // overflow: "scroll",
               }}
             >
               {this.state.tabKey === "1" ? (

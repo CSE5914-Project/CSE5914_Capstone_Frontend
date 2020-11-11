@@ -8,6 +8,7 @@ let strings = {
     mh: "Conversation with Movie Assistant",
     ph: "Write your message here",
     qp: "What film genere would you like to watch?",
+    pf: "Profile",
   },
   es: {
     rl: "Lanzamientos recientes",
@@ -16,6 +17,7 @@ let strings = {
     mh: "Conversación con Movie Assistant",
     ph: "Escribe tu mensaje aquí",
     qp: "¿Qué género de películas te gustaría ver?",
+    pf: "Perfil",
   },
   ru: {
     rl: "Последние выпуски",
@@ -24,6 +26,7 @@ let strings = {
     mh: "Разговор с Ассистентом фильма",
     ph: "Напишите здесь свое сообщение",
     qp: "какой жанр фильмов вы бы хотели посмотреть?",
+    pf: "Профиль",
   },
   fr: {
     rl: "Versions récentes",
@@ -32,6 +35,7 @@ let strings = {
     mh: "Conversation avec Movie Assistant",
     ph: "Écrivez votre message ici",
     qp: "quel genre de film aimeriez-vous regarder?",
+    pf: "Profil",
   },
   ko: {
     rl: "최근 출시",
@@ -40,6 +44,7 @@ let strings = {
     mh: "Movie Assistant와 대화",
     ph: "여기에 메시지 작성",
     qp: "어떤 영화 장르를보고 싶습니까?",
+    pf: "프로필",
   },
   zh: {
     rl: "最新版本",
@@ -48,6 +53,7 @@ let strings = {
     mh: "与电影助手对话",
     ph: "在这里写您的信息",
     qp: "您想看什么类型的电影",
+    pf: "个人资料",
   },
 };
 
