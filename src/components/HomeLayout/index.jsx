@@ -320,6 +320,17 @@ export default class HomeLayout extends React.Component {
         });
       }, 0);
     });
+
+    document.getElementsByClassName("chatbot-button-icon")[0].onclick = () => {
+      let ele = document.getElementsByClassName(
+        "react-chatbot-kit-chat-container"
+      )[0];
+      if (ele.style.display === "none") {
+        ele.style.display = "";
+      } else {
+        ele.style.display = "none";
+      }
+    };
   }
 
   render() {

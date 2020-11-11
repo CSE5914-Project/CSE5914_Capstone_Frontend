@@ -37,7 +37,6 @@ class ChatBot extends React.Component {
       config.state["question"][0] = this.props.question;
     }
 
-    console.log(this.props.question);
     // inject the state updater
     ActionProvider.prototype.onEnter = this.props.onEnter;
     ActionProvider.prototype.setActionProvider = this.props.setActionProvider;
