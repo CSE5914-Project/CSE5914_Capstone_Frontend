@@ -42,3 +42,13 @@
 .site-layout-background-2 {
   overflow: auto;
 } */
+
+div.badge {
+  position: absolute;
+  color: #fff;
+  border-top: 50px solid #ff9600;
+  width: 50px;
+  border-right: 50px solid transparent;
+  z-index: 2;
+  filter: drop-shadow(1px 1px 4px rgba(0, 0, 0, 0.5));
+}

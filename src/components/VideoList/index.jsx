@@ -3,7 +3,14 @@ import "antd/dist/antd.css";
 import "./index.css";
 import { Link } from "react-router-dom";
 import { Row, Col, Card, Skeleton, Tooltip, Modal, Empty } from "antd";
-import { HeartOutlined, RedoOutlined, HeartTwoTone } from "@ant-design/icons";
+import {
+  HeartOutlined,
+  RedoOutlined,
+  HeartTwoTone,
+  LoadingOutlined,
+  MinusOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import ProfilePage from "../MovieProfile/index";
 import { IP_ADDRESS, MOVIE_TRAILER_LINK, get } from "../../api/base";
 
@@ -65,20 +72,25 @@ const VideoList = (props) => {
     let isFavo = movieInfo.id in props.favoList;
 
     let heartButton = (
-      <HeartOutlined
+      <PlusOutlined
         key="favorite"
         onClick={() => props.addFavorite(movieInfo)}
       />
     );
     if (isFavo) {
       heartButton = (
-        <HeartTwoTone
+        <MinusOutlined
           key="favorite"
           twoToneColor="#eb2f96"
           onClick={() => props.addFavorite(movieInfo)}
         />
       );
     }
+
+    if (props.stateChanges.includes(movieInfo.id)) {
+      heartButton = <LoadingOutlined />;
+    }
+
     return (
       <Col
         key={i.toString()}
@@ -86,7 +98,15 @@ const VideoList = (props) => {
         style={{ height: "auto", width: "80%" }}
         lg={24 / lgColCounts}
       >
-        <div>
+        <div
+          style={
+            {
+              // position: "relative !important",
+              // overflow: "hidden",
+              // display: "block!important",
+            }
+          }
+        >
           <Card
             className="img-hover-zoom"
             onError={() => {
@@ -98,25 +118,28 @@ const VideoList = (props) => {
               width: "220px",
             }}
             cover={
-              <img
-                alt={movieInfo.title}
-                onClick={() => {
-                  //open up modal for the video
-                  get(IP_ADDRESS + MOVIE_TRAILER_LINK + movieInfo.id)
-                    .then((d) => {
-                      movieInfo["trailer"] = d["trailer"];
-                    })
-                    .finally(() => {
-                      setClicked(movieInfo);
-                      setModal(true);
-                    });
-                }}
-                src={
-                  props.failedImages.includes(i)
-                    ? coverImagePH
-                    : imageAdress + movieInfo["poster_path"]
-                }
-              />
+              <React.Fragment>
+                <div className={isFavo ? "badge" : "non-badge"}></div>
+                <img
+                  alt={movieInfo.title}
+                  onClick={() => {
+                    //open up modal for the video
+                    get(IP_ADDRESS + MOVIE_TRAILER_LINK + movieInfo.id)
+                      .then((d) => {
+                        movieInfo["trailer"] = d["trailer"];
+                      })
+                      .finally(() => {
+                        setClicked(movieInfo);
+                        setModal(true);
+                      });
+                  }}
+                  src={
+                    props.failedImages.includes(i)
+                      ? coverImagePH
+                      : imageAdress + movieInfo["poster_path"]
+                  }
+                />
+              </React.Fragment>
             }
             actions={[
               heartButton,

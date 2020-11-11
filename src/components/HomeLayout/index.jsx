@@ -56,11 +56,21 @@ const { Header, Sider, Content, Footer } = Layout;
 const { TextArea } = Input;
 const { Search } = Input;
 const { Meta } = Card;
-const openNotificationWithIcon = (type) => {
-  notification[type]({
-    message: type === "success" ? "List Updated." : "No More Movies.",
-    duration: 2,
-  });
+const openNotificationWithIcon = (type, title = null) => {
+  if (title) {
+    notification[type]({
+      message:
+        type === "success"
+          ? `${title} added to the list`
+          : `${title} removed from the list`,
+      duration: 2,
+    });
+  } else {
+    notification[type]({
+      message: type === "success" ? "List Updated." : "No More Movies.",
+      duration: 2,
+    });
+  }
 };
 
 export default class HomeLayout extends React.Component {
@@ -84,6 +94,7 @@ export default class HomeLayout extends React.Component {
     user: {},
     logoutLoading: false,
     genreLoading: false,
+    stateChangeMovies: [],
   };
 
   toggle = () => {
@@ -161,13 +172,21 @@ export default class HomeLayout extends React.Component {
   };
 
   addToFavorite = (movie) => {
+    this.setState({
+      stateChangeMovies: this.state.stateChangeMovies.concat(movie["id"]),
+    });
+
     if (movie["id"] in this.state.favoList) {
       // remove
       get(IP_ADDRESS + REMOVE_FAVO_LIST + `movie_id=${movie["id"]}`).then(
         (d) => {
           this.setState({
             favoList: d["Current favorite_list"],
+            stateChangeMovies: this.state.stateChangeMovies.filter(
+              (i) => i !== movie["id"]
+            ),
           });
+          openNotificationWithIcon("info", movie["title"]);
         }
       );
     } else {
@@ -175,7 +194,11 @@ export default class HomeLayout extends React.Component {
       get(IP_ADDRESS + ADD_FAVO_LIST + `movie_id=${movie["id"]}`).then((d) => {
         this.setState({
           favoList: d["Current favorite_list"],
+          stateChangeMovies: this.state.stateChangeMovies.filter(
+            (i) => i !== movie["id"]
+          ),
         });
+        openNotificationWithIcon("success", movie["title"]);
       });
     }
   };
@@ -514,6 +537,7 @@ export default class HomeLayout extends React.Component {
                     failedImages={this.state.failedImages}
                     favoList={this.state.favoList}
                     addFavorite={this.addToFavorite}
+                    stateChanges={this.state.stateChangeMovies}
                   />
                   {this.state.movieLoadingMore && !this.state.reachedEnd ? (
                     <Spin tip={"Fetching more movies..."} />
@@ -556,6 +580,7 @@ export default class HomeLayout extends React.Component {
                     failedImages={this.state.failedImages}
                     favoList={this.state.favoList}
                     addFavorite={this.addToFavorite}
+                    stateChanges={this.state.stateChangeMovies}
                     isFavoPage={true}
                   />
                 </React.Fragment>
