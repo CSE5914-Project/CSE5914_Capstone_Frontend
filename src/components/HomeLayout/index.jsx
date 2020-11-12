@@ -247,27 +247,29 @@ export default class HomeLayout extends React.Component {
 
   onSearch = (val, event) => {
     window.scrollTo(0, 0);
-    this.setState({
-      searchLoading: true,
-    });
-
-    get(
-      IP_ADDRESS +
-        SEARCH +
-        `?keyword=${val}&page=1&include_adult=${
-          this.state.user.age === "17" ? false : true
-        }`
-    ).then((d) => {
+    if (val.length) {
       this.setState({
-        movieList: d["movieList"]["results"],
-        failedImages: [],
-        movieSourceState: "bySearch",
-        pageNumber: 1,
-        reachedEnd: false,
-        searchLoading: false,
-        lastSearchWord: val,
+        searchLoading: true,
       });
-    });
+
+      get(
+        IP_ADDRESS +
+          SEARCH +
+          `?keyword=${val}&page=1&include_adult=${
+            this.state.user.age === "17" ? false : true
+          }`
+      ).then((d) => {
+        this.setState({
+          movieList: d["movieList"]["results"],
+          failedImages: [],
+          movieSourceState: "bySearch",
+          pageNumber: 1,
+          reachedEnd: false,
+          searchLoading: false,
+          lastSearchWord: val,
+        });
+      });
+    }
   };
 
   addToFavorite = (movie) => {
