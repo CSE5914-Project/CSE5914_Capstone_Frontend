@@ -113,7 +113,50 @@ export default class HomeLayout extends React.Component {
     });
   };
 
+  reloadPage = () => {
+    Promise.all([
+      get(IP_ADDRESS + GET_INTIAL_MOVIE + "?top_n=20&page=1"),
+      get(IP_ADDRESS + GET_USER),
+    ]).then(([movies, user]) => {
+      setTimeout(() => {
+        this.setState({
+          movieList: movies["movieList"].filter((m) => {
+            if (user.age === "17") {
+              return m["adult"] === false;
+            } else {
+              return true;
+            }
+          }),
+          user: user,
+          movieLoadingMore: false,
+          /*
+           *  one of the three enums: ["popular", "byId", "byGenere"]
+           */
+          movieSourceState: "popular",
+          pageNumber: 1,
+          reachedEnd: false,
+          lastRecMovieId: -1,
+          lastUserText: "",
+          logoutLoading: false,
+          genreLoading: false,
+          stateChangeMovies: [],
+          lastSearchWord: "",
+          searchLoading: false,
+        });
+        window.scrollTo(0, 0);
+
+        //fetch user info
+        get(IP_ADDRESS + GET_FAVO_LIST).then((d) => {
+          this.setState({
+            favoList: d["favorite_list"],
+          });
+        });
+      }, 0);
+    });
+  };
+
   onUserEnterText = (text) => {
+    window.scrollTo(0, 0);
     this.setState({
       genreLoading: true,
     });
@@ -128,7 +171,11 @@ export default class HomeLayout extends React.Component {
       .then((data) => {
         // update the set state
         this.state.botActionProvider(data.robotResponse);
-        if (data["movieList"]["results"].length > 0) {
+        if (
+          data["movieList"]["results"].length > 0 &&
+          data.robotResponse !==
+            "Error, we don't have the result you are asking!"
+        ) {
           openNotificationWithIcon("success");
           this.setState({
             botMessage: data.robotResponse,
@@ -138,6 +185,15 @@ export default class HomeLayout extends React.Component {
             pageNumber: 1,
             reachedEnd: false,
             lastUserText: text,
+          });
+          window.scrollTo(0, 0);
+        } else if (
+          data.robotResponse ===
+          "Error, we don't have the result you are asking!"
+        ) {
+          openNotificationWithIcon("info");
+          this.setState({
+            botMessage: data.robotResponse,
           });
           window.scrollTo(0, 0);
         } else {
@@ -160,7 +216,13 @@ export default class HomeLayout extends React.Component {
         openNotificationWithIcon("success");
         data["movieList"]["results"].unshift(this.state.movieList[index]);
         this.setState({
-          movieList: data["movieList"]["results"],
+          movieList: data["movieList"]["results"].filter((m) => {
+            if (this.state.user.age === "17") {
+              return m["adult"] === false;
+            } else {
+              return true;
+            }
+          }),
           failedImages: [],
           movieSourceState: "byId",
           pageNumber: 1,
@@ -270,7 +332,15 @@ export default class HomeLayout extends React.Component {
           if (data["movieList"].length > 0) {
             this.setState({
               pageNumber: this.state.pageNumber + 1,
-              movieList: this.state.movieList.concat(data["movieList"]),
+              movieList: this.state.movieList.concat(
+                data["movieList"].filter((m) => {
+                  if (this.state.user.age === "17") {
+                    return m["adult"] === false;
+                  } else {
+                    return true;
+                  }
+                })
+              ),
               loadingMore: false,
             });
           } else {
@@ -291,7 +361,13 @@ export default class HomeLayout extends React.Component {
             this.setState({
               pageNumber: this.state.pageNumber + 1,
               movieList: this.state.movieList.concat(
-                data["movieList"]["results"]
+                data["movieList"]["results"].filter((m) => {
+                  if (this.state.user.age === "17") {
+                    return m["adult"] === false;
+                  } else {
+                    return true;
+                  }
+                })
               ),
               loadingMore: false,
             });
@@ -299,7 +375,13 @@ export default class HomeLayout extends React.Component {
             this.setState({
               pageNumber: this.state.pageNumber + 1,
               movieList: this.state.movieList.concat(
-                data["movieList"]["results"]
+                data["movieList"]["results"].filter((m) => {
+                  if (this.state.user.age === "17") {
+                    return m["adult"] === false;
+                  } else {
+                    return true;
+                  }
+                })
               ),
               loadingMore: false,
               reachedEnd: true,
@@ -390,7 +472,13 @@ export default class HomeLayout extends React.Component {
             strings[user.language ? user.language : "en"]["ph"];
 
           this.setState({
-            movieList: movies["movieList"],
+            movieList: movies["movieList"].filter((m) => {
+              if (user.age === "17") {
+                return m["adult"] === false;
+              } else {
+                return true;
+              }
+            }),
             // only the genre question for the demo2
             botMessage: curQuestions[1],
             user: user,
@@ -681,7 +769,7 @@ export default class HomeLayout extends React.Component {
               ) : null}
 
               {this.state.tabKey === "4" ? (
-                <UserProfile user={this.state.user} />
+                <UserProfile user={this.state.user} reload={this.reloadPage} />
               ) : null}
             </Content>
             <BottomScrollListener onBottom={this.handleScrollToBottom}>

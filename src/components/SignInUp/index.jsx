@@ -61,6 +61,7 @@ export default class SignInUp extends React.Component {
     age: 17,
     lang: "en",
     signInLoading: false,
+    invalidUsernameFlag: false,
   };
 
   componentDidMount() {
@@ -96,36 +97,44 @@ export default class SignInUp extends React.Component {
   };
 
   handleOk = () => {
-    this.setState({
-      modalLoading: true,
-    });
-
-    get(IP_ADDRESS + USER_LOGIN + this.state["username"])
-      .then(() => {
-        this.setState({
-          loggedIn: true,
-          modalLoading: false,
-        });
-      })
-      .catch((err) => {
-        if (this.state.newSession) {
-          get(
-            IP_ADDRESS +
-              CREATE_SESSION +
-              `username=${this.state.username}&age=${this.state.age}&language=${this.state.lang}`
-          ).then(() => {
-            this.setState({
-              loggedIn: true,
-              modalLoading: false,
-            });
-          });
-        } else {
-          this.setState({
-            modalLoading: false,
-            newSession: true,
-          });
-        }
+    let re = /^[a-zA-Z\-0-9]+$/;
+    if (!re.test(this.state.username)) {
+      this.setState({
+        invalidUsernameFlag: true,
       });
+    } else {
+      this.setState({
+        modalLoading: true,
+        invalidUsernameFlag: false,
+      });
+
+      get(IP_ADDRESS + USER_LOGIN + this.state["username"])
+        .then(() => {
+          this.setState({
+            loggedIn: true,
+            modalLoading: false,
+          });
+        })
+        .catch((err) => {
+          if (this.state.newSession) {
+            get(
+              IP_ADDRESS +
+                CREATE_SESSION +
+                `username=${this.state.username}&age=${this.state.age}&language=${this.state.lang}`
+            ).then(() => {
+              this.setState({
+                loggedIn: true,
+                modalLoading: false,
+              });
+            });
+          } else {
+            this.setState({
+              modalLoading: false,
+              newSession: true,
+            });
+          }
+        });
+    }
   };
 
   handleCancel = () => {
@@ -136,6 +145,7 @@ export default class SignInUp extends React.Component {
       lang: "en",
       newSession: false,
       modalLoading: false,
+      invalidUsernameFlag: false,
     });
   };
 
@@ -235,6 +245,13 @@ export default class SignInUp extends React.Component {
                     <div style={{ color: "red" }}>
                       <br />
                       Please create a new user account.
+                    </div>
+                  ) : null}
+
+                  {this.state.invalidUsernameFlag ? (
+                    <div style={{ color: "red" }}>
+                      <br />
+                      Please enter a valid user name.
                     </div>
                   ) : null}
                 </Modal>
