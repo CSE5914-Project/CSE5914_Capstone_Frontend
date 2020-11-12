@@ -1,6 +1,8 @@
 import React from "react";
 import { Form, Input, Button, Select, Spin, notification } from "antd";
 import { UPDATE_USER, IP_ADDRESS, get } from "../../api/base";
+import strings from "../HomeLayout/lang.js";
+
 const { Option } = Select;
 const layout = {
   labelCol: {
@@ -32,7 +34,10 @@ const UserProfile = (props) => {
       props.reload();
       setAge(parseInt(body.age));
       setLoading(false);
-      openNotificationWithIcon("info", "Age Restriction Reset.");
+      openNotificationWithIcon(
+        "info",
+        strings[props.user.language ? props.user.language : "en"]["ar"]
+      );
     });
   };
 
@@ -51,41 +56,83 @@ const UserProfile = (props) => {
     <div style={{ height: "100vh" }}>
       <Form {...layout} form={form} name="control-hooks" onFinish={onFinish}>
         <Spin spinning={loading} />
-        <Form.Item name="username" label="Username">
+        <Form.Item
+          name="username"
+          label={
+            strings[props.user.language ? props.user.language : "en"]["un"]
+          }
+        >
           <Input defaultValue={props.user.username} disabled={true} />
         </Form.Item>
-        <Form.Item name="lang" label="Language">
+        <Form.Item
+          name="lang"
+          label={
+            strings[props.user.language ? props.user.language : "en"]["lang"]
+          }
+        >
           <Select
             placeholder="Select an language class"
             allowClear
             defaultValue={props.user.language}
             disabled={true}
           >
-            <Option value="en">English</Option>
-            <Option value="es">Spanish</Option>
-            <Option value="ru">Russian</Option>
-            <Option value="fr">French</Option>
-            <Option value="ko">Korean</Option>
-            <Option value="zh">Chinese</Option>
+            <Option value="en">
+              {" "}
+              {strings[props.user.language ? props.user.language : "en"]["nl"]}
+            </Option>
+            <Option value="es">
+              {" "}
+              {strings[props.user.language ? props.user.language : "en"]["nl"]}
+            </Option>
+            <Option value="ru">
+              {" "}
+              {strings[props.user.language ? props.user.language : "en"]["nl"]}
+            </Option>
+            <Option value="fr">
+              {" "}
+              {strings[props.user.language ? props.user.language : "en"]["nl"]}
+            </Option>
+            <Option value="ko">
+              {" "}
+              {strings[props.user.language ? props.user.language : "en"]["nl"]}
+            </Option>
+            <Option value="zh">
+              {" "}
+              {strings[props.user.language ? props.user.language : "en"]["nl"]}
+            </Option>
           </Select>
         </Form.Item>
-        <Form.Item name="age" label="Age">
+        <Form.Item
+          name="age"
+          label={
+            strings[props.user.language ? props.user.language : "en"]["age"]
+          }
+        >
           <Select
             placeholder="Select an age class"
             allowClear
             defaultValue={age}
           >
-            <Option value={21}>over 18</Option>
-            <Option value={17}>under 18</Option>
+            <Option value={21}>
+              {strings[props.user.language ? props.user.language : "en"]["o18"]}
+            </Option>
+            <Option value={17}>
+              {" "}
+              {strings[props.user.language ? props.user.language : "en"]["u18"]}
+            </Option>
           </Select>
         </Form.Item>
 
         <Form.Item {...tailLayout}>
           <Button type="primary" htmlType="submit">
-            Submit
+            {
+              strings[props.user.language ? props.user.language : "en"][
+                "submit"
+              ]
+            }
           </Button>
           <Button htmlType="button" onClick={onReset}>
-            Reset
+            {strings[props.user.language ? props.user.language : "en"]["reset"]}
           </Button>
         </Form.Item>
       </Form>

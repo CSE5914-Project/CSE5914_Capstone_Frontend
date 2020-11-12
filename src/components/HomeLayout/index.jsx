@@ -57,22 +57,6 @@ const { Header, Sider, Content, Footer } = Layout;
 const { TextArea } = Input;
 const { Search } = Input;
 const { Meta } = Card;
-const openNotificationWithIcon = (type, title = null) => {
-  if (title) {
-    notification[type]({
-      message:
-        type === "success"
-          ? `${title} added to the list`
-          : `${title} removed from the list`,
-      duration: 2,
-    });
-  } else {
-    notification[type]({
-      message: type === "success" ? "List Updated." : "No More Movies.",
-      duration: 2,
-    });
-  }
-};
 
 export default class HomeLayout extends React.Component {
   state = {
@@ -111,6 +95,38 @@ export default class HomeLayout extends React.Component {
     this.setState({
       failedImages: this.state.failedImages,
     });
+  };
+
+  openNotificationWithIcon = (type, title = null) => {
+    if (title) {
+      notification[type]({
+        message:
+          type === "success"
+            ? `${title} ${
+                strings[
+                  this.state.user.language ? this.state.user.language : "en"
+                ]["al"]
+              }`
+            : `${title} ${
+                strings[
+                  this.state.user.language ? this.state.user.language : "en"
+                ]["rel"]
+              }`,
+        duration: 2,
+      });
+    } else {
+      notification[type]({
+        message:
+          type === "success"
+            ? strings[
+                this.state.user.language ? this.state.user.language : "en"
+              ]["lu"]
+            : strings[
+                this.state.user.language ? this.state.user.language : "en"
+              ]["nm"],
+        duration: 2,
+      });
+    }
   };
 
   reloadPage = () => {
@@ -171,12 +187,8 @@ export default class HomeLayout extends React.Component {
       .then((data) => {
         // update the set state
         this.state.botActionProvider(data.robotResponse);
-        if (
-          data["movieList"]["results"].length > 0 &&
-          data.robotResponse !==
-            "Error, we don't have the result you are asking!"
-        ) {
-          openNotificationWithIcon("success");
+        if (data["movieList"]["results"].length > 0 && data.exist) {
+          this.openNotificationWithIcon("success");
           this.setState({
             botMessage: data.robotResponse,
             movieList: data["movieList"]["results"],
@@ -187,17 +199,14 @@ export default class HomeLayout extends React.Component {
             lastUserText: text,
           });
           window.scrollTo(0, 0);
-        } else if (
-          data.robotResponse ===
-          "Error, we don't have the result you are asking!"
-        ) {
-          openNotificationWithIcon("info");
+        } else if (!data.exist) {
+          this.openNotificationWithIcon("info");
           this.setState({
             botMessage: data.robotResponse,
           });
           window.scrollTo(0, 0);
         } else {
-          openNotificationWithIcon("info");
+          this.openNotificationWithIcon("info");
         }
       })
       .finally(() => {
@@ -213,7 +222,7 @@ export default class HomeLayout extends React.Component {
 
     get(IP_ADDRESS + MOVIE_REC + movie["id"] + "&page=1").then((data) => {
       if (data["movieList"]["results"].length > 0) {
-        openNotificationWithIcon("success");
+        this.openNotificationWithIcon("success");
         data["movieList"]["results"].unshift(this.state.movieList[index]);
         this.setState({
           movieList: data["movieList"]["results"].filter((m) => {
@@ -231,7 +240,7 @@ export default class HomeLayout extends React.Component {
         });
         window.scrollTo(0, 0);
       } else {
-        openNotificationWithIcon("info");
+        this.openNotificationWithIcon("info");
       }
     });
   };
@@ -276,7 +285,7 @@ export default class HomeLayout extends React.Component {
               (i) => i !== movie["id"]
             ),
           });
-          openNotificationWithIcon("info", movie["title"]);
+          this.openNotificationWithIcon("info", movie["title"]);
         }
       );
     } else {
@@ -288,7 +297,7 @@ export default class HomeLayout extends React.Component {
             (i) => i !== movie["id"]
           ),
         });
-        openNotificationWithIcon("success", movie["title"]);
+        this.openNotificationWithIcon("success", movie["title"]);
       });
     }
   };
@@ -664,7 +673,11 @@ export default class HomeLayout extends React.Component {
               )}
               {this.state.tabKey === "1" ? (
                 <Search
-                  placeholder="input search text"
+                  placeholder={
+                    strings[
+                      this.state.user.language ? this.state.user.language : "en"
+                    ]["it"]
+                  }
                   // onSearch={onSearch}
                   enterButton
                   allowClear
