@@ -141,23 +141,27 @@ const VideoList = (props) => {
                 />
               </React.Fragment>
             }
-            actions={[
-              heartButton,
-              <Tooltip
-                title="Refresh the page with the recommendated movies"
-                mouseEnterDelay={0.5}
-              >
-                <RedoOutlined
-                  key="shuffle"
-                  onClick={() => {
-                    if (!props.isFavoPage) {
-                      props.onUserClick(i);
-                    }
-                  }}
-                />
-                ,
-              </Tooltip>,
-            ]}
+            actions={
+              props.isFavoPage
+                ? [heartButton]
+                : [
+                    heartButton,
+                    <Tooltip
+                      title="Refresh the page with the recommendated movies"
+                      mouseEnterDelay={0.5}
+                    >
+                      <RedoOutlined
+                        key="shuffle"
+                        onClick={() => {
+                          if (!props.isFavoPage) {
+                            props.onUserClick(i);
+                          }
+                        }}
+                      />
+                      ,
+                    </Tooltip>,
+                  ]
+            }
           >
             <Meta
               title={movieInfo.title}

@@ -153,6 +153,7 @@ export default class HomeLayout extends React.Component {
           reachedEnd: false,
           lastRecMovieId: -1,
           lastUserText: "",
+          failedImages: [],
           logoutLoading: false,
           genreLoading: false,
           stateChangeMovies: [],
@@ -269,6 +270,11 @@ export default class HomeLayout extends React.Component {
           lastSearchWord: val,
         });
       });
+    } else {
+      this.setState({
+        searchLoading: true,
+      });
+      this.reloadPage();
     }
   };
 
