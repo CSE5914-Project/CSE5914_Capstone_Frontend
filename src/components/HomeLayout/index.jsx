@@ -741,6 +741,7 @@ export default class HomeLayout extends React.Component {
                     favoList={this.state.favoList}
                     addFavorite={this.addToFavorite}
                     stateChanges={this.state.stateChangeMovies}
+                    user={this.state.user}
                   />
                   {this.state.movieLoadingMore && !this.state.reachedEnd ? (
                     <Spin tip={"Fetching more movies..."} />
@@ -784,6 +785,7 @@ export default class HomeLayout extends React.Component {
                     favoList={this.state.favoList}
                     addFavorite={this.addToFavorite}
                     stateChanges={this.state.stateChangeMovies}
+                    user={this.state.user}
                     isFavoPage={true}
                   />
                 </React.Fragment>

@@ -23,6 +23,10 @@ let strings = {
     rel: "removed from the list.",
     lu: "List Updated.",
     nm: "No More Movies.",
+    ow: "Overview",
+    tl: "Trailer",
+    rde: "Release Date",
+    olan: "Original Language",
   },
   es: {
     rl: "Lanzamientos recientes",
@@ -46,6 +50,10 @@ let strings = {
     rel: "eliminado de la lista",
     lu: "Lista actualizada",
     nm: "No más películas",
+    ow: "Descripción general",
+    tl: "Tráiler",
+    rde: "Fecha de lanzamiento",
+    olan: "Idioma original",
   },
   ru: {
     rl: "Последние выпуски",
@@ -69,6 +77,10 @@ let strings = {
     rel: "удален из списка.",
     lu: "Список обновлен.",
     nm: "Больше никаких фильмов.",
+    ow: "Обзор",
+    tl: "Прицеп",
+    rde: "Дата выпуска",
+    олан: "Исходный язык",
   },
   fr: {
     rl: "Versions récentes",
@@ -92,6 +104,10 @@ let strings = {
     rel: "supprimé de la liste.",
     lu: "Liste mise à jour.",
     nm: "Plus de films.",
+    ow: "Vue d'ensemble",
+    tl: "Bande-annonce",
+    rde: "Date de sortie",
+    olan: "Langue originale",
   },
   ko: {
     rl: "최근 출시",
@@ -115,6 +131,10 @@ let strings = {
     rel: "목록에서 제거됨.",
     lu: "목록 업데이트 됨.",
     nm: "더 이상 영화 없음.",
+    ow: "개요",
+    tl: "예고편",
+    rde: "출시일",
+    olan: "Original Language",
   },
   zh: {
     rl: "最新版本",
@@ -138,6 +158,10 @@ let strings = {
     rel: "已从列表中删除。",
     lu: "列表已更新。",
     nm: "没有更多的电影。",
+    ow: "概述",
+    tl: "预告片",
+    rde: "发布日期",
+    olan: "原始语言",
   },
 };
 

@@ -211,7 +211,11 @@ const VideoList = (props) => {
         cancelButtonProps={{ style: { display: "none" } }}
         okButtonProps={{ style: { display: "none" } }}
       >
-        <ProfilePage movie={clicked} playing={playing}></ProfilePage>
+        <ProfilePage
+          movie={clicked}
+          playing={playing}
+          user={props.user}
+        ></ProfilePage>
       </Modal>
     </React.Fragment>
   );

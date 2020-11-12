@@ -5,6 +5,7 @@ import { Layout, Typography } from "antd";
 import { Statistic, notification } from "antd";
 import { FireTwoTone, LikeOutlined } from "@ant-design/icons";
 import ReactPlayer from "react-player";
+import strings from "../HomeLayout/lang";
 
 const { Header, Footer, Sider, Content } = Layout;
 const { Title } = Typography;
@@ -52,18 +53,53 @@ export default class ProfilePage extends React.Component {
                     <div className="icons-list" style={{ fontSize: 16 }}>
                       <FireTwoTone /> {this.props.movie.popularity}
                     </div>
-                    <b>Original Language:</b>{" "}
+                    <b>
+                      {
+                        strings[
+                          this.props.user.language
+                            ? this.props.user.language
+                            : "en"
+                        ]["olan"]
+                      }
+                      :
+                    </b>
                     {this.props.movie.original_language} <br />
-                    <b>Release Date:</b> {this.props.movie.release_date}
+                    <b>
+                      {
+                        strings[
+                          this.props.user.language
+                            ? this.props.user.language
+                            : "en"
+                        ]["rde"]
+                      }
+                      :
+                    </b>
+                    {this.props.movie.release_date}
                   </p>
                   <Divider />
                   <div className="movie-overview-box">
-                    <Title level={4}>Overview</Title>
+                    <Title level={4}>
+                      {
+                        strings[
+                          this.props.user.language
+                            ? this.props.user.language
+                            : "en"
+                        ]["ow"]
+                      }
+                    </Title>
                     {this.props.movie.overview}
                   </div>
                   <Divider />
                   <div className="movie-trailer-box">
-                    <Title level={4}>Trailer</Title>
+                    <Title level={4}>
+                      {
+                        strings[
+                          this.props.user.language
+                            ? this.props.user.language
+                            : "en"
+                        ]["tl"]
+                      }
+                    </Title>
                     <ReactPlayer
                       url={this.props.movie.trailer}
                       controls={true}
