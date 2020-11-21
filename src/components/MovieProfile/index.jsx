@@ -6,6 +6,16 @@ import { Statistic, notification } from "antd";
 import { FireTwoTone, LikeOutlined } from "@ant-design/icons";
 import ReactPlayer from "react-player";
 import strings from "../HomeLayout/lang";
+import {
+  HeartOutlined,
+  RedoOutlined,
+  HeartTwoTone,
+  LoadingOutlined,
+  MinusOutlined,
+  MinusCircleFilled,
+  PlusCircleFilled,
+  PlusOutlined,
+} from "@ant-design/icons";
 
 const { Header, Footer, Sider, Content } = Layout;
 const { Title } = Typography;
@@ -13,6 +23,24 @@ const imageAddress = "https://image.tmdb.org/t/p/w220_and_h330_face/";
 
 export default class ProfilePage extends React.Component {
   render() {
+    let heartButton = (
+      <PlusCircleFilled
+        height={"5em"}
+        key="favorite"
+        onClick={() => this.props.addFavorite(this.props.movie)}
+      />
+    );
+    console.log(this.props.movie.id in this.props.isFavo);
+    if (this.props.movie.id in this.props.isFavo) {
+      heartButton = (
+        <MinusCircleFilled
+          key="favorite"
+          twoToneColor="#eb2f96"
+          onClick={() => this.props.addFavorite(this.props.movie)}
+        />
+      );
+    }
+
     return (
       <div className="page-box">
         <div className="movie-page">
@@ -29,7 +57,10 @@ export default class ProfilePage extends React.Component {
                 className="movie-title-box"
                 style={{ width: 600, marginTop: 50, marginLeft: 370 }}
               >
-                <Title level={1} style={{ color: "white", fontSize: 40 }}>
+                <Title
+                  level={1}
+                  style={{ color: "white", fontSize: 40, width: "500px" }}
+                >
                   {this.props.movie.title}
                 </Title>
               </div>
@@ -44,7 +75,7 @@ export default class ProfilePage extends React.Component {
             <Content style={{ height: 900, margin: 80 }}>
               <div style={{ float: "left", marginTop: 50 }}>
                 <Title level={3} style={{ float: "left" }}>
-                  {this.props.movie.title}
+                  {this.props.movie.title} {heartButton}
                 </Title>
                 <br />
                 <br />

@@ -215,6 +215,8 @@ const VideoList = (props) => {
           movie={clicked}
           playing={playing}
           user={props.user}
+          addFavorite={props.addFavorite}
+          isFavo={props.favoList}
         ></ProfilePage>
       </Modal>
     </React.Fragment>

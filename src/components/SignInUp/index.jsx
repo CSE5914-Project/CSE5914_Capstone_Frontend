@@ -97,7 +97,7 @@ export default class SignInUp extends React.Component {
   };
 
   handleOk = () => {
-    let re = /^[a-zA-Z\-0-9]+$/;
+    let re = /^[a-zA-Z0-9]+([_\s\-]?[a-zA-Z0-9])*$/;
     if (!re.test(this.state.username)) {
       this.setState({
         invalidUsernameFlag: true,
