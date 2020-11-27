@@ -13,7 +13,6 @@ import {
 } from "@ant-design/icons";
 import ProfilePage from "../MovieProfile/index";
 import { IP_ADDRESS, MOVIE_TRAILER_LINK, get } from "../../api/base";
-
 const { Meta } = Card;
 
 function repeat(item, times) {
@@ -108,7 +107,9 @@ const VideoList = (props) => {
           }
         >
           <Card
-            className="img-hover-zoom"
+            className={`${
+              movieInfo.unlocked ? "img-hover-zoom" : "ant-card-blur"
+            }`}
             onError={() => {
               console.log(`unfound image for ${movieInfo.title}`);
               props.addFailedImage(i);
@@ -116,6 +117,8 @@ const VideoList = (props) => {
             hoverable
             style={{
               width: "220px",
+              // textShadow: "0 0 32px white",
+              // color: "transparent",
             }}
             cover={
               <React.Fragment>
@@ -123,15 +126,19 @@ const VideoList = (props) => {
                 <img
                   alt={movieInfo.title}
                   onClick={() => {
-                    //open up modal for the video
-                    get(IP_ADDRESS + MOVIE_TRAILER_LINK + movieInfo.id)
-                      .then((d) => {
-                        movieInfo["trailer"] = d["trailer"];
-                      })
-                      .finally(() => {
-                        setClicked(movieInfo);
-                        setModal(true);
-                      });
+                    if (movieInfo.unlocked) {
+                      //open up modal for the video
+                      get(IP_ADDRESS + MOVIE_TRAILER_LINK + movieInfo.id)
+                        .then((d) => {
+                          movieInfo["trailer"] = d["trailer"];
+                        })
+                        .finally(() => {
+                          setClicked(movieInfo);
+                          setModal(true);
+                        });
+                    } else {
+                      props.saveUnlockedFilm(i);
+                    }
                   }}
                   src={
                     props.failedImages.includes(i)
@@ -163,6 +170,27 @@ const VideoList = (props) => {
                   ]
             }
           >
+            {movieInfo.unlocked ? null : (
+              <i
+                class="gg-keyhole keyhole"
+                onClick={() => {
+                  if (movieInfo.unlocked) {
+                    //open up modal for the video
+                    get(IP_ADDRESS + MOVIE_TRAILER_LINK + movieInfo.id)
+                      .then((d) => {
+                        movieInfo["trailer"] = d["trailer"];
+                      })
+                      .finally(() => {
+                        setClicked(movieInfo);
+                        setModal(true);
+                      });
+                  } else {
+                    props.saveUnlockedFilm(i);
+                  }
+                }}
+              ></i>
+            )}
+
             <Meta
               title={movieInfo.title}
               description={
@@ -170,7 +198,19 @@ const VideoList = (props) => {
                   ? movieInfo.overview.substring(0, 200) + "..."
                   : movieInfo.overview
               }
-            />
+            ></Meta>
+
+            {movieInfo.unlocked ? (
+              <span
+                class={
+                  movieInfo.vote_average > 6.0
+                    ? "stamp is-approved"
+                    : "stamp is-nope"
+                }
+              >
+                {movieInfo.vote_average}
+              </span>
+            ) : null}
           </Card>
         </div>
       </Col>

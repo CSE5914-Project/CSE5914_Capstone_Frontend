@@ -97,6 +97,13 @@ export default class HomeLayout extends React.Component {
     });
   };
 
+  saveUnlockedFilm = (index) => {
+    this.state.movieList[index].unlocked = true;
+    this.setState({
+      movieList: this.state.movieList,
+    });
+  };
+
   openNotificationWithIcon = (type, title = null) => {
     if (title) {
       notification[type]({
@@ -741,6 +748,7 @@ export default class HomeLayout extends React.Component {
                     favoList={this.state.favoList}
                     addFavorite={this.addToFavorite}
                     stateChanges={this.state.stateChangeMovies}
+                    saveUnlockedFilm={this.saveUnlockedFilm}
                     user={this.state.user}
                   />
                   {this.state.movieLoadingMore && !this.state.reachedEnd ? (
