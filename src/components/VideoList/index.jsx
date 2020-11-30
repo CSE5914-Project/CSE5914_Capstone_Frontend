@@ -69,7 +69,7 @@ const VideoList = (props) => {
 
   let movieCols = movies.map((movieInfo, i) => {
     let isFavo = movieInfo.id in props.favoList;
-
+    movieInfo.unlocked = props.isFavoPage || movieInfo.unlocked;
     let heartButton = (
       <PlusOutlined
         key="favorite"
@@ -200,7 +200,7 @@ const VideoList = (props) => {
               }
             ></Meta>
 
-            {movieInfo.unlocked ? (
+            {movieInfo.unlocked && !props.isFavoPage ? (
               <span
                 class={
                   movieInfo.vote_average > 6.0

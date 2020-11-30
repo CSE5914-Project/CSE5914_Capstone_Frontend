@@ -104,6 +104,26 @@ export default class HomeLayout extends React.Component {
     });
   };
 
+  shuffle(array) {
+    var currentIndex = array.length,
+      temporaryValue,
+      randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+
+    return array;
+  }
+
   openNotificationWithIcon = (type, title = null) => {
     if (title) {
       notification[type]({
@@ -195,11 +215,20 @@ export default class HomeLayout extends React.Component {
       .then((data) => {
         // update the set state
         this.state.botActionProvider(data.robotResponse);
-        if (data["movieList"]["results"].length > 0 && data.exist) {
+        if (
+          data.exist &&
+          data["good_movie_list"]["results"].length > 0 &&
+          data["bad_movie_list"]["results"].length > 0
+        ) {
           this.openNotificationWithIcon("success");
+          let totalList = data["good_movie_list"]["results"].concat(
+            data["bad_movie_list"]["results"]
+          );
+
+          this.shuffle(totalList);
           this.setState({
             botMessage: data.robotResponse,
-            movieList: data["movieList"]["results"],
+            movieList: totalList,
             failedImages: [],
             movieSourceState: "byGenre",
             pageNumber: 1,
@@ -459,12 +488,19 @@ export default class HomeLayout extends React.Component {
               this.state.user.age === "17" ? false : true
             }`
         ).then((data) => {
-          if (data["movieList"]["results"].length > 0) {
+          if (
+            data.exist &&
+            data["good_movie_list"]["results"].length > 0 &&
+            data["bad_movie_list"]["results"].length > 0
+          ) {
+            let totalList = data["good_movie_list"]["results"].concat(
+              data["bad_movie_list"]["results"]
+            );
+            this.shuffle(totalList);
+
             this.setState({
               pageNumber: this.state.pageNumber + 1,
-              movieList: this.state.movieList.concat(
-                data["movieList"]["results"]
-              ),
+              movieList: this.state.movieList.concat(totalList),
               loadingMore: false,
             });
           } else {
