@@ -215,20 +215,11 @@ export default class HomeLayout extends React.Component {
       .then((data) => {
         // update the set state
         this.state.botActionProvider(data.robotResponse);
-        if (
-          data.exist &&
-          data["good_movie_list"]["results"].length > 0 &&
-          data["bad_movie_list"]["results"].length > 0
-        ) {
+        if (data.exist && data["movieList"]["results"].length > 0) {
           this.openNotificationWithIcon("success");
-          let totalList = data["good_movie_list"]["results"].concat(
-            data["bad_movie_list"]["results"]
-          );
-
-          this.shuffle(totalList);
           this.setState({
             botMessage: data.robotResponse,
-            movieList: totalList,
+            movieList: data["movieList"]["results"],
             failedImages: [],
             movieSourceState: "byGenre",
             pageNumber: 1,
@@ -488,19 +479,12 @@ export default class HomeLayout extends React.Component {
               this.state.user.age === "17" ? false : true
             }`
         ).then((data) => {
-          if (
-            data.exist &&
-            data["good_movie_list"]["results"].length > 0 &&
-            data["bad_movie_list"]["results"].length > 0
-          ) {
-            let totalList = data["good_movie_list"]["results"].concat(
-              data["bad_movie_list"]["results"]
-            );
-            this.shuffle(totalList);
-
+          if (data.exist && data["movieList"]["results"].length > 0) {
             this.setState({
               pageNumber: this.state.pageNumber + 1,
-              movieList: this.state.movieList.concat(totalList),
+              movieList: this.state.movieList.concat(
+                data["movieList"]["results"]
+              ),
               loadingMore: false,
             });
           } else {
