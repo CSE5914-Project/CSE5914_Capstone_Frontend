@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const IP_ADDRESS = "http://127.0.0.1:8000/";
+export const IP_ADDRESS = "https://cse5914-2020fall.herokuapp.com/";
 export const GET_QUESTION = "api/get_all_question/";
 export const GET_INTIAL_MOVIE = "api/get_popular_movies/";
 export const POST_ANSWER = "api/post_answer/";
